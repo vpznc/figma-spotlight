@@ -8,6 +8,7 @@ class result {
     }
 }
 var results;
+//array with current search results to quickly go throught them
 figma.ui.onmessage = msg => {
     if (msg.type === 'closePlugin') {
         figma.closePlugin();
@@ -23,6 +24,7 @@ figma.ui.onmessage = msg => {
         findPage(msg.searchValue.toLowerCase());
     }
 };
+//find specific page and save results to results array
 function findPage(searchValue) {
     const allPages = figma.root.findAll(n => n.type === 'PAGE');
     results = [];
@@ -36,6 +38,6 @@ function findPage(searchValue) {
 }
 function outputResult() {
     for (let entry of results) {
-        figma.ui.postMessage(entry.name);
+        figma.ui.postMessage({ type: 'showNewResultElement', value: entry.name });
     }
 }

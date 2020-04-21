@@ -133,22 +133,25 @@ body {
     const searchValue = document.getElementById('searchField').value
     
     if (searchValue == "") {
+      clearResultsUI();
       parent.postMessage({ pluginMessage: { type: 'clear' } }, '*');
-      clearResultsList();
     }
     else {
-      clearResultsList();
       parent.postMessage({ pluginMessage: { type: 'checkResults', searchValue } }, '*');
+      clearResultsUI();
       parent.postMessage({ pluginMessage: { type: 'showResults' } }, '*');
     }
   }
   
-
-  onmessage = (event) => {
-    addNewResult(event.data.pluginMessage);
+  window.onmessage = async (event) => {
+    console.log(event.data.pluginMessage);
+    if (event.data.pluginMessage.type === 'showNewResultElement') {
+      showNewResultUI(event.data.pluginMessage.value);
+      //console.log(event.data.pluginMessage.value);
+    }
   } 
   
-  function addNewResult(name) {
+  function showNewResultUI(name) {
     var newElement = document.createElement("div");
     newElement.setAttribute("class", "resultItem");
 
@@ -158,7 +161,7 @@ body {
     document.getElementById("resultsList").appendChild(newElement);
   }
 
-  function clearResultsList() {
+  function clearResultsUI() {
     const list = document.getElementById("resultsList");
     while (list.firstChild) {
       list.removeChild(list.firstChild)

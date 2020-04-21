@@ -15,6 +15,7 @@ class result {
 }
 
 var results : result[]
+//array with current search results to quickly go throught them
 
 figma.ui.onmessage = msg => {
   if (msg.type === 'closePlugin') {
@@ -35,6 +36,7 @@ figma.ui.onmessage = msg => {
   }
 }
 
+//find specific page and save results to results array
 function findPage(searchValue: string) {
   const allPages = figma.root.findAll(n => n.type === 'PAGE');
   results = [];
@@ -52,6 +54,6 @@ function findPage(searchValue: string) {
 
 function outputResult() {
   for (let entry of results) {
-    figma.ui.postMessage(entry.name);
+    figma.ui.postMessage( { type: 'showNewResultElement', value: entry.name} );
   }
 }
