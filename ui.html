@@ -138,7 +138,8 @@ body {
     }
     else {
       clearResultsList();
-      parent.postMessage({ pluginMessage: { type: 'showResults', searchValue } }, '*');
+      parent.postMessage({ pluginMessage: { type: 'checkResults', searchValue } }, '*');
+      parent.postMessage({ pluginMessage: { type: 'showResults' } }, '*');
     }
   }
   
