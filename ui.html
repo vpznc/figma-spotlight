@@ -91,11 +91,6 @@ body {
 }
 </style>
 
-<html>
-<head>
-  <link rel="stylesheet" type="text/css" href="ui.css">
-</head>
-
 <body>
   <div id="searchBox">
     <img src="./assets/Search.svg">
@@ -118,28 +113,24 @@ body {
   
   function PresTab(key) {
       var keycode = (window.event) ? event.keyCode : key.keyCode;
-      switch (keycode) {
-        case 16:
+      if (keycode == 16) {
           key.preventDefault();
-        break;
-        case 27:
+      }
+      if (keycode == 27) {
           parent.postMessage({ pluginMessage: { type: 'closePlugin' } }, '*')
-        break;
-        case 38:
+      }
+      if (keycode == 38) {
           parent.postMessage({ pluginMessage: { type: 'moveFocusUp' } }, '*')
-        break;
-        case 40:
+      }
+      if (keycode == 40) {
           parent.postMessage({ pluginMessage: { type: 'moveFocusDown' } }, '*')
           hilightResultListUI(0);
-
-        break;
       }
   }
   
   document.getElementById('searchField').focus();
   document.getElementById('searchField').oninput = () => {
-    const searchValue = document.getElementById('searchField').value
-    
+    const searchValue = document.getElementById('searchField').value;
     if (searchValue == "") {
       clearResultsUI();
       parent.postMessage({ pluginMessage: { type: 'clear' } }, '*');
@@ -155,9 +146,10 @@ body {
     console.log(event.data.pluginMessage);
     if (event.data.pluginMessage.type === 'showNewResultElement') {
       showNewResultUI(event.data.pluginMessage.value);
-      //console.log(event.data.pluginMessage.value);
     }
   } 
+
+  //updating ui functions
   
   function showNewResultUI(name) {
     var newElement = document.createElement("div");

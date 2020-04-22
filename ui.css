@@ -1,0 +1,90 @@
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 400;
+    src: url("https://rsms.me/inter/font-files/Inter-Regular.woff2?v=3.7")
+    format("woff2"),
+    url("https://rsms.me/inter/font-files/Inter-Regular.woff?v=3.7")
+    format("woff");
+}
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 500;
+    src: url("https://rsms.me/inter/font-files/Inter-Medium.woff2?v=3.7")
+    format("woff2"),
+    url("https://rsms.me/inter/font-files/Inter-Medium.woff2?v=3.7")
+    format("woff");
+}
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 600;
+    src: url("https://rsms.me/inter/font-files/Inter-SemiBold.woff2?v=3.7")
+    format("woff2"),
+    url("https://rsms.me/inter/font-files/Inter-SemiBold.woff2?v=3.7")
+    format("woff");
+}
+.options {
+    display: inline-block;
+    font-size: 14px;
+    margin-right: 12px;
+    font-family: 'Inter';
+    background-color: #F2F2F2;
+    border-radius: 12px;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+#searchField {
+    font-size: 14px;
+    display: inline-block;
+    width: 300px;
+    font-family: 'Inter';
+    border: 0px;
+    line-height: 26px;
+    margin-left: 4px;
+    margin-right: 8px;
+    margin-bottom: 10px;
+    position: relative;
+    top: 12px;
+}
+::placeholder { 
+    color: #cccccc;
+}
+#searchField:focus {
+    outline: none;
+}
+#explanation {
+    background-color: rgb(245, 245, 245);
+    font-family: 'Inter';
+    font-size: 11px;
+    color: #a8a8a8;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    height: 16px;
+    padding-left: 16px;
+    margin: 0px;
+    border-top: 1px solid #E5E5E5;
+}
+#searchIcon {
+    margin-left: 16px;
+    margin-top: 6px;  
+    position: relative;
+    top: 16px;
+}
+body {
+    margin: 0px;
+}
+#searchBox {
+    margin-bottom: 18px;
+}
+.resultItem {
+    font-family: 'Inter';
+    font-size: 14px;
+    height: 16px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 16px;
+}

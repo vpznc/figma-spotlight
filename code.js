@@ -1,20 +1,10 @@
-class result {
-    constructor(type, name, nodeid, focused) {
-        this.type = type;
-        this.name = name;
-        this.nodeid = nodeid;
-        this.focused = focused;
-    }
-}
-var allData;
-var results;
-var recents;
+var allData = [];
+var results = [];
+var recents = [];
 var resultsItemWithFocus = 0;
 //array with current search results to quickly go throught them
-figma.showUI(__html__, { width: 480, height: 100 });
+figma.showUI(__html__, { width: 480, height: 500 });
 loadAllPages();
-//find("i");
-//outputResult();
 figma.ui.onmessage = message => {
     if (message.type === 'closePlugin') {
         figma.closePlugin();
@@ -38,19 +28,23 @@ figma.ui.onmessage = message => {
         if (resultsItemWithFocus != results.length)
             resultsItemWithFocus--;
     }
+    if (message.type === 'jumpToFrame') {
+        const nodeId = message.id;
+        const node = figma.getNodeById(nodeId);
+    }
 };
 //find specific page and save results to results array
 function loadAllPages() {
     const topFrames = figma.root.children
-        .map(p => //The map() method creates a new array populated with the results of calling a provided function on every element in the calling array
+        .map(page => //The map() method creates a new array populated with the results of calling a provided function on every element in the calling array
      
     //creating new array and calling the following function on each element of the array
-    p.type === "PAGE" //checking if node type is page
-        ? p.children.map(f => ({
-            id: f.id,
-            name: f.name,
-            type: f.type,
-            page: p.name
+    page.type === "PAGE" //checking if node type is page
+        ? page.children.map(frame => ({
+            id: frame.id,
+            name: frame.name,
+            type: frame.type,
+            page: page.name
         }))
         : null)
         .reduce((accumulatedArray, currentArray) => {
@@ -60,17 +54,20 @@ function loadAllPages() {
     //2. merging it with already merged arrays that are stored in 
     //The reduce() method executes a reducer - function that you provide on each element of the array, resulting in a single output value
     //The concat() method is used to merge two or more arrays
+    const pages = figma.root.children.map(page => ({
+        id: page.id,
+        name: page.name,
+        type: page.type
+    }));
     for (const child of topFrames) {
         if (child.type === "COMPONENT") {
             console.log(child);
         }
     }
-    //console.log(pages);
-    //console.log(components);
-    /*const allPages = figma.root.findAll(n => n.type === 'PAGE');
-    for (const child of allPages) {
-        //allData.push(new result('PAGE', child.name, child.id, false))
-    }*/
+    recents.push(pages[0], pages[1], pages[3]);
+    recents.forEach(recentElement => {
+        figma.ui.postMessage({ type: 'showNewResultElement', value: recentElement.name });
+    });
 }
 function find(searchValue) {
     results = [];
