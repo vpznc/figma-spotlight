@@ -63,11 +63,12 @@ body {
   border: 0px;
   
   font-weight: 400;
+  letter-spacing: 0.2px;
   font-size: 15px;
-  color: #BDBDBD;
+  color: #000000;
 }
 ::placeholder { 
-  color: #cccccc;
+  color: #BDBDBD;
 }
 #searchField:focus {
   outline: none;
@@ -93,10 +94,15 @@ body {
   padding-bottom: 8px;
   padding-left: 16px;
 }
-#recentsHeader {
+.header {
   font-size: 11px;
   font-weight: 600;
   color: #2D2D2D;
+}
+.header:hover {
+  cursor: default;
+}
+#recentsHeader {
   padding-left: 15px;
   padding-top: 14px;
   border-top: 1px solid #E5E5E5;
@@ -129,7 +135,25 @@ body {
   bottom: 15px;
   background: #ffffff;
 }
+#helpFab:hover {
+  cursor: pointer;
+}
+#help {
+  font-size: 13px;
+  padding: 15px;
+  width: 130px;
+  height: 120px;
+  position: absolute;
+  right: 15px;
+  bottom: 10px;
+  background: #ffffff;
+  border: 1px solid #E5E5E5;
+  box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.06);
+  border-radius: 4px;
+}
 </style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 </head>
 
 <body>
@@ -140,7 +164,7 @@ body {
     <input type="text" id="searchField" placeholder="Jump to page, frame, component…">
   </div>
   
-  <div id="recentsHeader">
+  <div id="recentsHeader" class="header">
     <div id="recentsTitle">
       Recents
     </div>
@@ -154,12 +178,16 @@ body {
   <div id="resultsList">
   </div>
 
-  <div id="explanation">
+  <!--<div id="explanation">
     Press Shift to switch modes
-  </div>
+  </div>-->
 
   <div id="helpFab">
   ?   
+  </div>
+
+  <div id="help">
+    <div class="header">Help</div>
   </div>
 </body>
 </html>
@@ -229,15 +257,40 @@ body {
     parent[pointer].style.backgroundColor = "yellow";
   }
 
-  function showhide(id) {
-    id.fadeOut("slow");
-  }
+  let helpFab = document.getElementById("helpFab");
+  let help = document.getElementById("help");
 
-  let fabButton = document.getElementById("helpFab");
+  $(help).animate({
+    width: 110,
+    height: 110,
+    opacity: 0,
+  }, 0);
 
-  fabButton.addEventListener("mouseenter", function( event ) {   
-    console.log("hello");
-    //showhide(fabButton);
+  $(help).hide();
+
+  helpFab.addEventListener("click", function( event ) {   
+    console.log('aa')
+    $(help).show();
+    $(help).animate({
+      width: 130,
+      height: 120,
+      opacity: 1,
+      bottom: 15,
+    }, 160, 'easeOutBack');
+
+  }, false);
+
+  help.addEventListener("mouseleave", function( event ) {   
+    $(help).animate({
+      width: 110,
+      height: 110,
+      opacity: 0,
+      bottom: 10,
+    }, 
+    60, 
+    function() {
+      $(help).hide();
+    });
 
   }, false);
 
