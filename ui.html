@@ -45,14 +45,13 @@ body {
 }
 #searchIcon {
   display: inline-block;
-  margin-left: 12px;
-  width: 20px;
+  margin-left: 15px;
   position: absolute;
-  top: 20px;
+  top: 12px;
 }
 #searchBox {
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding-top: 8px;
+  padding-bottom: 0px;
 }
 #searchField {
   display: inline-block;
@@ -64,7 +63,7 @@ body {
   
   font-weight: 400;
   letter-spacing: 0.2px;
-  font-size: 15px;
+  font-size: 11px;
   color: #000000;
 }
 ::placeholder { 
@@ -88,11 +87,40 @@ body {
   bottom: 0;
 }
 .resultItem {
-  font-size: 13px;
-  height: 16px;
+  font-size: 11px;
+  line-height: 16px;
   padding-top: 8px;
   padding-bottom: 8px;
-  padding-left: 16px;
+  padding-left: 15px;
+  display: flex;
+}
+.resultItemImagePage {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px; 
+  background-image: url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M14 6.5V15H4V2H9.5M14 6.5L9.5 2M14 6.5H9.5V2' stroke='%23333333'/%3E%3C/svg%3E%0A");
+}
+.resultItemImageComponent {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px; 
+  background-image: url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 9L5 6L8 9L5 12L2 9Z' fill='%239B51E0'/%3E%3Cpath d='M10 9L13 6L16 9L13 12L10 9Z' fill='%239B51E0'/%3E%3Cpath d='M6 5L9 2L12 5L9 8L6 5Z' fill='%239B51E0'/%3E%3Cpath d='M6 13L9 10L12 13L9 16L6 13Z' fill='%239B51E0'/%3E%3C/svg%3E%0A");
+}
+.resultItemImageFrame {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px; 
+  background-image: url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 6H6M15 6H12M6 6V3M6 6V12M6 6H12M6 12H3M6 12V15M6 12H12M12 12H15M12 12V15M12 12V6M12 6V3' stroke='%23333333'/%3E%3C/svg%3E%0A");
+}
+.resultItemImageLayer {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px; 
+  background-image: url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 3.5H3.5V6M7 3.5H10M12 3.5H14.5V5M14.5 7V10M14.5 12V14.5H13M11 14.5H8M6 14.5H3.5V13M3.5 8V11' stroke='%23333333'/%3E%3C/svg%3E%0A");
+}
+.resultItem:hover {
+  background-color: #EEEEEE;
+  cursor: pointer;
 }
 .header {
   font-size: 11px;
@@ -102,20 +130,24 @@ body {
 .header:hover {
   cursor: default;
 }
+#resultsHeader {
+  padding-left: 15px;
+  padding-top: 14px;
+  margin-bottom: 8px;
+  margin-top: 8px;
+  border-top: 1px solid #E5E5E5;
+}
 #recentsHeader {
   padding-left: 15px;
   padding-top: 14px;
+  margin-bottom: 8px;
+  margin-top: 8px;
   border-top: 1px solid #E5E5E5;
 }
-#recentsTitle {
-  display: inline-block;
-  text-align: left;
-  left: 0;
-}
 #helpFab {
-  position: absolute;
-  right: 15px;
-  bottom: 15px;
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
   padding: 5px;
   width: 28px;
   height: 28px;
@@ -132,6 +164,9 @@ body {
   line-height: 28px;
   background: #ffffff;
 }
+#helpFab:hover > #helpfabUI {
+  background-color: #EEEEEE;
+}
 #helpFab:hover {
   cursor: pointer;
 }
@@ -139,7 +174,7 @@ body {
   font-size: 13px;
   width: 174px;
   height: 229px;
-  position: absolute;
+  position: fixed;
   right: 15px;
   bottom: 10px;
   background: #ffffff;
@@ -170,7 +205,7 @@ body {
   letter-spacing: 0.2px;
   border-radius: 5px;
 
-  margin-right: 4px;
+  margin-right: 3px;
   padding-left: 4px;
   padding-right: 4px;
   padding-top: 2px;
@@ -188,7 +223,7 @@ body {
   border-top: 1px solid #E5E5E5;
   padding-left: 15px;
   padding-top: 12px;
-  margin-top: 18px;
+  margin-top: 20px;
   font-size: 11px;
   color: #828282;
   line-height: 18px;
@@ -201,16 +236,22 @@ body {
 <body>
   <div id="searchBox">
     <div id="searchIcon">
-      <svg id="searchIconIcon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3.5" y="3.5" width="9" height="9" rx="4.5" stroke="#BDBDBD"/><path d="M11.5 11.5L15 15" stroke="#BDBDBD"/></svg>
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3.5" y="3.5" width="9" height="9" rx="4.5" stroke="#BDBDBD"/>
+        <path d="M11.5 11.5L15 15" stroke="#BDBDBD"/>
+      </svg>        
     </div>
     <input type="text" id="searchField" placeholder="Jump to page, frame, component…">
   </div>
-  
-  <div id="recentsHeader" class="header">
-    Recents
-  </div>
 
-  <div id="resultsList">
+  <div id="recents">
+    <div id="recentsHeader" class="header">Recents</div>
+    <div id="recentsList"></div>
+  </div>
+  
+  <div id="results">
+    <div id="resultsHeader" class="header">All</div>
+    <div id="resultsList"></div>
   </div>
 
   <div id="helpFab">
@@ -227,7 +268,6 @@ body {
           <svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10L6 13L9 10" stroke="#4F4F4F" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 6L6 3L9 6" stroke="#4F4F4F" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
       </div>
-      
 
       <div class="helpList">
         <div class="helpListItem">Next mode</div>
@@ -238,7 +278,6 @@ body {
         <div class="helpListItem">Do action</div>
         <div class="helpIcon">&nbsp;return&nbsp;</div>
       </div>
-      
 
       <div class="helpList">
         <div class="helpListItem">Relaunch</div>
@@ -252,7 +291,6 @@ body {
           <svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 13V9M3 9V3.5H5.75C7.26878 3.5 8.5 4.73122 8.5 6.25V6.25C8.5 7.76878 7.26878 9 5.75 9H3Z" stroke="#4F4F4F"/></svg>          
         </div>
       </div>
-      <!---->
 
       <div id="helpAbout">
         Spotlight 1.0 by Vlad
@@ -272,48 +310,114 @@ body {
           key.preventDefault();
       }
       if (keycode == 27) {
-          parent.postMessage({ pluginMessage: { type: 'closePlugin' } }, '*')
+          parent.postMessage({ pluginMessage: { 
+            type: 'CLOSE' 
+          } 
+        }, '*')
       }
       if (keycode == 38) {
-          parent.postMessage({ pluginMessage: { type: 'moveFocusUp' } }, '*')
+          parent.postMessage({ 
+            pluginMessage: { 
+              type: 'UP' 
+            } 
+          }, '*')
       }
       if (keycode == 40) {
-          parent.postMessage({ pluginMessage: { type: 'moveFocusDown' } }, '*')
+          parent.postMessage({ 
+            pluginMessage: { 
+              type: 'DOWN' 
+            } 
+          }, '*')
           hilightResultListUI(0);
       }
   }
   
+  var recents = document.getElementById("recents");
+  var resultsHeader = document.getElementById("resultsHeader");
+
   document.getElementById('searchField').focus();
   document.getElementById('searchField').oninput = () => {
     const searchValue = document.getElementById('searchField').value;
     if (searchValue == "") {
-      clearResultsUI();
-      parent.postMessage({ pluginMessage: { type: 'clear' } }, '*');
+      //clearResultsUI();
+      $(recents).show();
+      $(resultsHeader).show();
+
+      parent.postMessage({ 
+        pluginMessage: { 
+          type: 'CLEAR' 
+        } 
+      }, '*');
     }
     else {
-      parent.postMessage({ pluginMessage: { type: 'checkResults', searchValue } }, '*');
-      clearResultsUI();
-      parent.postMessage({ pluginMessage: { type: 'showResults' } }, '*');
+      //clearResultsUI();
+      
+      $(recents).hide();
+      $(resultsHeader).hide();
+      
+      /* parent.postMessage({ 
+        pluginMessage: { 
+          type: 'CHECK', 
+          searchValue 
+        } 
+      }, '*');
+      parent.postMessage({ 
+        pluginMessage: { 
+          type: 'RESULTS' 
+        } 
+      }, '*');*/
     }
   }
   
   window.onmessage = async (event) => {
-    console.log(event.data.pluginMessage);
-    if (event.data.pluginMessage.type === 'showNewResultElement') {
-      showNewResultUI(event.data.pluginMessage.value);
+    if (event.data.pluginMessage.type === 'NEWRESULT') {
+      let name = event.data.pluginMessage.name;
+      let id = event.data.pluginMessage.id;
+      let nodeType = event.data.pluginMessage.nodeType;
+      showNewResultUI(name, id, nodeType, true);
+    }
+    if (event.data.pluginMessage.type === 'RECENT') {
+      let name = event.data.pluginMessage.name;
+      let id =  event.data.pluginMessage.id;
+      let nodeType = event.data.pluginMessage.nodeType;
+      showNewResultUI(name, id, nodeType, false);
     }
   } 
 
   //updating ui functions
   
-  function showNewResultUI(name) {
-    var newElement = document.createElement("div");
-    newElement.setAttribute("class", "resultItem");
+  function showNewResultUI(name, id, nodeType, newResult) {
+    var newListItem = document.createElement("div");
+    var image = document.createElement("div");
+    var text = document.createElement("div");
+    var title = document.createTextNode(name);
 
-    var newElementText = document.createTextNode(name);
-    newElement.appendChild(newElementText);
+    newListItem.setAttribute("class", "resultItem");
+    text.appendChild(title);
 
-    document.getElementById("resultsList").appendChild(newElement);
+    image.setAttribute("class", "resultItemImageLayer");
+    if (nodeType === "PAGE") image.setAttribute("class", "resultItemImagePage");
+    if (nodeType === "FRAME") image.setAttribute("class", "resultItemImageFrame");
+    if (nodeType === "COMPONENT") image.setAttribute("class", "resultItemImageComponent");
+    
+    newListItem.appendChild(image);
+    newListItem.appendChild(text);
+    
+    newListItem.addEventListener("click", function( event ) {   
+      parent.postMessage({ 
+        pluginMessage: { 
+          type: 'JUMP', 
+          id } 
+        }, 
+        '*');
+    }, false);
+
+    if (newResult) {
+      document.getElementById("resultsList").appendChild(newListItem);
+    }
+    else {
+      document.getElementById("recentsList").appendChild(newListItem);
+    }
   }
 
   function clearResultsUI() {
@@ -328,14 +432,11 @@ body {
     parent[pointer].style.backgroundColor = "yellow";
   }
 
+</script>
 
+<!-- HELP FAB LOGIC -->
 
-
-
-
-
-  //------- HELP FAB THINGS
-
+<script>
   let helpFab = document.getElementById("helpFab");
   let help = document.getElementById("help");
 
@@ -355,7 +456,7 @@ body {
       height: 229,
       opacity: 1,
       bottom: 15,
-    }, 160, 'easeOutBack');
+    }, 200, 'easeOutBack');
 
   }, false);
 

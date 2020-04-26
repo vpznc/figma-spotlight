@@ -5,40 +5,58 @@ var recents = [];
 var resultsItemWithFocus = 0;
 //array with current search results to quickly go throught them
 
-figma.showUI(__html__, { width: 448, height: 300});
+figma.showUI(__html__, { width: 300, height: 400});
 
 loadAllPages();
 
 figma.ui.onmessage = message => {
-  if (message.type === 'closePlugin') {
+  if (message.type === 'CLOSE') {
     figma.closePlugin();
   }
 
-  if (message.type === 'clear') {
-    figma.ui.resize(480, 100);
+  if (message.type === 'CLEAR') {
+    //figma.ui.resize(480, 100);
   }
 
-  if (message.type === 'showResults') {
-    figma.ui.resize(480, 300);
-    outputResult();
+  if (message.type === 'RESULTS') {
+    //figma.ui.resize(480, 300);
+    //outputResult();
   }
 
-  if (message.type === 'checkResults') {
-    loadAllPages();
+  if (message.type === 'CHECK') {
+    //loadAllPages();
     //loadFilePages(message.searchValue.toLowerCase())
   }
 
-  if (message.type === 'moveFocusUp') {
+  if (message.type === 'UP') {
     if (resultsItemWithFocus != 0) resultsItemWithFocus++;
   }
 
-  if (message.type === 'moveFocusDown') {
+  if (message.type === 'DOWN') {
     if (resultsItemWithFocus != results.length) resultsItemWithFocus--;
   }
 
-  if (message.type === 'jumpToFrame') {
+  if (message.type === "JUMP") {
     const nodeId = message.id;
     const node = figma.getNodeById(nodeId);
+
+    // Change Page
+    if (node.parent.type === "PAGE") {
+      figma.currentPage = node.parent;
+    }
+
+    // Select the Node
+    if (node.type !== "DOCUMENT" && node.type !== "PAGE") {
+      figma.currentPage.selection = [node];
+      figma.viewport.scrollAndZoomIntoView([node]);
+    }
+
+    // If Page
+    if (node.type === "PAGE") {
+      figma.currentPage = node;
+    }
+
+    //figma.closePlugin();
   }
 }
 
@@ -71,18 +89,32 @@ function loadAllPages() {
     name: page.name,
     type: page.type
   }));
+
+  recents.push(pages[0], topFrames[188], topFrames[399]);
   
-  for (const child of topFrames) {
-    if (child.type === "COMPONENT") {
-      console.log(child);
-    }    
-  } 
-  
-  recents.push(pages[0], pages[1], pages[3]);
-  
-  recents.forEach(recentElement => {
-    
-    //figma.ui.postMessage( { type: 'showNewResultElement', value: recentElement.name});
+  recents.forEach(element => {
+    figma.ui.postMessage({ 
+      type: 'RECENT', 
+      name: element.name, 
+      id: element.id, 
+      nodeType: element.type});
+  });
+
+  pages.forEach(element => {
+    figma.ui.postMessage({ 
+      type: 'NEWRESULT', 
+      name: element.name, 
+      id: element.id, 
+      nodeType: element.type
+    });
+  });
+
+  topFrames.forEach(element => {
+    figma.ui.postMessage({ type: 'NEWRESULT', 
+      name: element.name, 
+      id: element.id, 
+      nodeType: element.type
+    });
   });
 }
 
@@ -100,7 +132,7 @@ function find(searchValue: string) {
 function outputResult() {
   if (Array.isArray(results) && results.length) {
     for (let entry of results) {
-      figma.ui.postMessage( { type: 'showNewResultElement', value: entry.name} );
+      figma.ui.postMessage( { type: 'NEWRESULT', value: entry.name} );
     }
   }
 
