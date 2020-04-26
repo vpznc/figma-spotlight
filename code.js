@@ -66,7 +66,7 @@ function loadAllPages() {
     }
     recents.push(pages[0], pages[1], pages[3]);
     recents.forEach(recentElement => {
-        figma.ui.postMessage({ type: 'showNewResultElement', value: recentElement.name });
+        //figma.ui.postMessage( { type: 'showNewResultElement', value: recentElement.name});
     });
 }
 function find(searchValue) {

@@ -1,109 +1,165 @@
+<html>
+<head>
 <style>
 @font-face {
-    font-family: "Inter";
-    font-style: normal;
-    font-weight: 400;
-    src: url("https://rsms.me/inter/font-files/Inter-Regular.woff2?v=3.7")
-    format("woff2"),
-    url("https://rsms.me/inter/font-files/Inter-Regular.woff?v=3.7")
-    format("woff");
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  src: url("https://rsms.me/inter/font-files/Inter-Regular.woff2?v=3.7")
+  format("woff2"),
+  url("https://rsms.me/inter/font-files/Inter-Regular.woff?v=3.7")
+  format("woff");
 }
 @font-face {
-    font-family: "Inter";
-    font-style: normal;
-    font-weight: 500;
-    src: url("https://rsms.me/inter/font-files/Inter-Medium.woff2?v=3.7")
-    format("woff2"),
-    url("https://rsms.me/inter/font-files/Inter-Medium.woff2?v=3.7")
-    format("woff");
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  src: url("https://rsms.me/inter/font-files/Inter-Medium.woff2?v=3.7")
+  format("woff2"),
+  url("https://rsms.me/inter/font-files/Inter-Medium.woff2?v=3.7")
+  format("woff");
 }
 @font-face {
-    font-family: "Inter";
-    font-style: normal;
-    font-weight: 600;
-    src: url("https://rsms.me/inter/font-files/Inter-SemiBold.woff2?v=3.7")
-    format("woff2"),
-    url("https://rsms.me/inter/font-files/Inter-SemiBold.woff2?v=3.7")
-    format("woff");
-}
-.options {
-    display: inline-block;
-    font-size: 14px;
-    margin-right: 12px;
-    font-family: 'Inter';
-    background-color: #F2F2F2;
-    border-radius: 12px;
-    padding-left: 4px;
-    padding-right: 4px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-}
-#searchField {
-    font-size: 14px;
-    display: inline-block;
-    width: 300px;
-    font-family: 'Inter';
-    border: 0px;
-    line-height: 26px;
-    margin-left: 4px;
-    margin-right: 8px;
-    margin-bottom: 10px;
-    position: relative;
-    top: 12px;
-}
-::placeholder { 
-    color: #cccccc;
-}
-#searchField:focus {
-    outline: none;
-}
-#explanation {
-    background-color: rgb(245, 245, 245);
-    font-family: 'Inter';
-    font-size: 11px;
-    color: #a8a8a8;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    height: 16px;
-    padding-left: 16px;
-    margin: 0px;
-    border-top: 1px solid #E5E5E5;
-}
-#searchIcon {
-    margin-left: 16px;
-    margin-top: 6px;  
-    position: relative;
-    top: 16px;
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  src: url("https://rsms.me/inter/font-files/Inter-SemiBold.woff2?v=3.7")
+  format("woff2"),
+  url("https://rsms.me/inter/font-files/Inter-SemiBold.woff2?v=3.7")
+  format("woff");
 }
 body {
-    margin: 0px;
+  font-family: 'Inter';
+  margin: 0px;
+}
+.options {
+  display: inline-block;
+  font-size: 14px;
+  margin-right: 12px;
+  background-color: #F2F2F2;
+  border-radius: 12px;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+#searchIcon {
+  display: inline-block;
+  margin-left: 12px;
+  width: 20px;
+  position: absolute;
+  top: 20px;
 }
 #searchBox {
-    margin-bottom: 18px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+#searchField {
+  display: inline-block;
+  width: 400px;
+  
+  line-height: 24px;
+  margin-left: 43px;
+  border: 0px;
+  
+  font-weight: 400;
+  font-size: 15px;
+  color: #BDBDBD;
+}
+::placeholder { 
+  color: #cccccc;
+}
+#searchField:focus {
+  outline: none;
+}
+#explanation {
+  background-color: rgb(245, 245, 245);
+  font-size: 11px;
+  color: #a8a8a8;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  height: 16px;
+  padding-left: 16px;
+  margin: 0px;
+  border-top: 1px solid #E5E5E5;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
 }
 .resultItem {
-    font-family: 'Inter';
-    font-size: 14px;
-    height: 16px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    padding-left: 16px;
+  font-size: 13px;
+  height: 16px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 16px;
+}
+#recentsHeader {
+  font-size: 11px;
+  font-weight: 600;
+  color: #2D2D2D;
+  padding-left: 15px;
+  padding-top: 14px;
+  border-top: 1px solid #E5E5E5;
+}
+#recentsTitle {
+  display: inline-block;
+  text-align: left;
+  left: 0;
+}
+#recentsClear {
+  display: inline-block;
+  position: absolute;
+  text-align: right;
+  color: #BDBDBD;
+  font-weight: 500;
+  right: 15;
+}
+#helpFab {
+  width: 28px;
+  height: 28px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 400;
+  color: #000000;
+  border-radius: 20px;
+  border: 1px solid #E5E5E5;
+  line-height: 28px;
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+  background: #ffffff;
 }
 </style>
+</head>
 
 <body>
   <div id="searchBox">
-    <img src="./assets/Search.svg">
-    <svg id="searchIcon" width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="3" y="3" width="11.5294" height="11.5294" rx="5.76471" stroke="#cccccc" stroke-width="2"/>
-      <path d="M12.8824 12.8824L17 17" stroke="#cccccc" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-    <input type="text" id="searchField" placeholder="Find…">
+    <div id="searchIcon">
+      <svg id="searchIconIcon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3.5" y="3.5" width="9" height="9" rx="4.5" stroke="#BDBDBD"/><path d="M11.5 11.5L15 15" stroke="#BDBDBD"/></svg>
+    </div>
+    <input type="text" id="searchField" placeholder="Jump to page, frame, component…">
   </div>
+  
+  <div id="recentsHeader">
+    <div id="recentsTitle">
+      Recents
+    </div>
+    <!--
+    <div id="recentsClear">
+      Clear
+    </div>
+    -->
+  </div>
+
+  <div id="resultsList">
+  </div>
+
   <div id="explanation">
     Press Shift to switch modes
   </div>
-  <div id="resultsList">
+
+  <div id="helpFab">
+  ?   
   </div>
 </body>
 </html>
@@ -172,5 +228,17 @@ body {
     var parent = document.getElementById('resultsList').children;
     parent[pointer].style.backgroundColor = "yellow";
   }
+
+  function showhide(id) {
+    id.fadeOut("slow");
+  }
+
+  let fabButton = document.getElementById("helpFab");
+
+  fabButton.addEventListener("mouseenter", function( event ) {   
+    console.log("hello");
+    //showhide(fabButton);
+
+  }, false);
 
 </script>
