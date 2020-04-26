@@ -5,7 +5,7 @@ var recents = [];
 var resultsItemWithFocus = 0;
 //array with current search results to quickly go throught them
 
-figma.showUI(__html__, { width: 448, height: 340});
+figma.showUI(__html__, { width: 448, height: 300});
 
 loadAllPages();
 
