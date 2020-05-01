@@ -1,0 +1,37 @@
+{
+  "name": "spotlight",
+  "version": "1.0.0",
+  "description": "Simple plugin to find anything you need in figma file",
+  "main": "webpack.config.js",
+  "dependencies": {
+    "@types/jquery": "^3.3.36",
+    "jquery": "^3.5.0"
+  },
+  "devDependencies": {
+    "css-loader": "^3.5.3",
+    "html-webpack-inline-source-plugin": "0.0.10",
+    "html-webpack-plugin": "^4.3.0",
+    "react-dev-utils": "^10.2.1",
+    "source-map": "^0.7.3",
+    "style-loader": "^1.2.1",
+    "ts-loader": "^7.0.2",
+    "typescript": "^3.8.3",
+    "url-loader": "^4.1.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vpznc/figma-spotlight.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vpznc/figma-spotlight/issues"
+  },
+  "homepage": "https://github.com/vpznc/figma-spotlight#readme"
+}
