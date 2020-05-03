@@ -1,5 +1,4 @@
 var recents = [];
-var resultsItemWithFocus = 0;
 //array with current search results to quickly go throught them
 
 figma.showUI(__html__, { width: 320, height: 380});
@@ -13,7 +12,7 @@ const topFrames = figma.root.children
         id: frame.id,
         name: frame.name,
         type: frame.type,
-        page: page.name
+        //page: page.name
       }))
     : null
 )
@@ -32,30 +31,17 @@ const pages = figma.root.children.map(page => ({
   type: page.type
 }));
 
-recents.push(pages[0], topFrames[0], topFrames[2]);
-
-recents.forEach(element => {
-  figma.ui.postMessage({ 
-    type: 'RECENT', 
-    name: element.name, 
-    id: element.id, 
-    nodeType: element.type});
-});
-
 pages.forEach(element => {
   figma.ui.postMessage({ 
     type: 'NEWRESULT', 
-    name: element.name, 
-    id: element.id, 
-    nodeType: element.type
+    node: element
   });
 });
 
 topFrames.forEach(element => {
-  figma.ui.postMessage({ type: 'NEWRESULT', 
-    name: element.name, 
-    id: element.id, 
-    nodeType: element.type
+  figma.ui.postMessage({ 
+    type: 'NEWRESULT', 
+    node: element
   });
 });
 
@@ -63,22 +49,42 @@ if ((topFrames.length + pages.length) > 0) {
   figma.ui.postMessage({type: 'HILIGHTFIRST'});
 }
 
+//recents.push(pages[0], topFrames[0], topFrames[2]);
+
+//console.log(recents);
+var recentsArray = figma.clientStorage.getAsync('recents');
+
+recentsArray.then(function(asyncRecents) {
+  if (asyncRecents.length != 0) {
+    asyncRecents.forEach(element => {
+      figma.ui.postMessage({ 
+        type: 'RECENT', 
+        node: element
+      });
+    })
+  }
+  else {
+    figma.ui.postMessage({ 
+      type: 'NORECENTS'
+    });
+  }
+});
+
+/*recents.forEach(element => {
+  figma.ui.postMessage({ 
+    type: 'RECENT', 
+    node: element
+  });
+});*/
+
+//figma.clientStorage.setAsync('recents', recents);
+
 figma.ui.onmessage = message => {
   if (message.type === 'CLOSE') {
     figma.closePlugin();
   }
 
-  if (message.type === 'CLEAR') {
-    //figma.ui.resize(480, 100);
-  }
-
-  if (message.type === 'RESULTS') {
-    //figma.ui.resize(480, 300);
-    //outputResult();
-  }
-
   if (message.type === 'CHECK') {
-    //results = [];
 
     for (const element of pages) {
       const seachNodeName = message.searchValue.toLowerCase();
@@ -86,9 +92,7 @@ figma.ui.onmessage = message => {
 
       if (nodeName.includes(seachNodeName)) {
         figma.ui.postMessage({ type: 'NEWRESULT', 
-          name: element.name, 
-          id: element.id, 
-          nodeType: element.type
+          node: element
         });
         
       }    
@@ -100,24 +104,13 @@ figma.ui.onmessage = message => {
 
       if (nodeName.includes(seachNodeName)) {
         figma.ui.postMessage({ type: 'NEWRESULT', 
-          name: element.name, 
-          id: element.id, 
-          nodeType: element.type
+          node: element
         });
         
       }    
     }
 
     figma.ui.postMessage({type: 'HILIGHTFIRST'});
-
-  }
-
-  if (message.type === 'UP') {
-    if (resultsItemWithFocus != 0) resultsItemWithFocus++;
-  }
-
-  if (message.type === 'DOWN') {
-    if (resultsItemWithFocus != topFrames.length) resultsItemWithFocus--;
   }
 
   if (message.type === "JUMP") {
@@ -139,6 +132,27 @@ figma.ui.onmessage = message => {
     if (node.type === "PAGE") {
       figma.currentPage = node;
     }
+
+    //Recents magic
+    
+    var storage = figma.clientStorage.getAsync('recents');
+    
+    storage.then(function(asyncRecents) {
+      var newRecents = [];
+
+      newRecents.push({
+        id: node.id,
+        name: node.name,
+        type: node.type
+      });
+
+      newRecents.push(asyncRecents[0]);
+      newRecents.push(asyncRecents[1]);
+      
+      figma.clientStorage.setAsync('recents', newRecents);
+    });
+
+    
 
     //figma.closePlugin();
   }

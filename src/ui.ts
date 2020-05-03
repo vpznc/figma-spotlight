@@ -8,9 +8,11 @@ document.addEventListener('keydown', keyboardInput);
 
 function keyboardInput(key: KeyboardEvent) {
     var keycode = key.keyCode;
+
     if (keycode == 16) {
         key.preventDefault();
     }
+
     if (keycode == 27) {
         parent.postMessage({ pluginMessage: { 
           type: 'CLOSE' 
@@ -19,13 +21,6 @@ function keyboardInput(key: KeyboardEvent) {
     }
 
     if (keycode == 38) {
-      parent.postMessage({ 
-        pluginMessage: { 
-          type: 'UP' 
-        } 
-      }, '*')
-
-      
       if (selectPointer != 0) {
         var r = document.getElementById('resultsList').children;
         
@@ -41,13 +36,7 @@ function keyboardInput(key: KeyboardEvent) {
       }
     }
 
-    if (keycode == 40) {
-      parent.postMessage({ 
-        pluginMessage: { 
-          type: 'DOWN' 
-        } 
-      }, '*')
-    
+    if (keycode == 40) {    
       var r = document.getElementById('resultsList').children;
 
       if ((r.length - 1) != selectPointer) {
@@ -74,8 +63,8 @@ var resultsHeader = document.getElementById("resultsHeader");
 
 document.getElementById('searchField').focus();
 document.getElementById('searchField').oninput = () => {
-  //console.log("aa");
   selectPointer = 0;
+
   const searchValue = (<HTMLInputElement>document.getElementById('searchField')).value;
   if (searchValue == "") {
     $(recents).show();
@@ -107,17 +96,16 @@ document.getElementById('searchField').oninput = () => {
 // functions to update ui from code.ts
 window.onmessage = async (event) => {
   if (event.data.pluginMessage.type === 'NEWRESULT') {
-    let name = event.data.pluginMessage.name;
-    let id = event.data.pluginMessage.id;
-    let nodeType = event.data.pluginMessage.nodeType;
-    showNewResultUI(name, id, nodeType, true);
+    showNewResultUI(event.data.pluginMessage.node, true);
+  }
+
+  if (event.data.pluginMessage.type === 'NORECENTS') {
+    $(document.getElementById("recents")).hide();
   }
 
   if (event.data.pluginMessage.type === 'RECENT') {
-    let name = event.data.pluginMessage.name;
-    let id =  event.data.pluginMessage.id;
-    let nodeType = event.data.pluginMessage.nodeType;
-    showNewResultUI(name, id, nodeType, false);
+    $(document.getElementById("recents")).show();
+    showNewResultUI(event.data.pluginMessage.node, false);
   }
 
   if (event.data.pluginMessage.type === 'HILIGHTFIRST') {
@@ -127,29 +115,34 @@ window.onmessage = async (event) => {
 } 
 
 // show new result list item
-function showNewResultUI(name, id, nodeType, newResult) {
+function showNewResultUI(node, newResult) {
   var newListItem = document.createElement("div");
   var image = document.createElement("div");
   var text = document.createElement("div");
-  var title = document.createTextNode(name);
+  var title = document.createTextNode(node.name);
 
   newListItem.setAttribute("class", "resultItem");
+  text.setAttribute("class", "resultItemText");
   text.appendChild(title);
 
   image.setAttribute("class", "resultItemImageLayer");
-  if (nodeType === "PAGE") image.setAttribute("class", "resultItemImagePage");
-  if (nodeType === "FRAME") image.setAttribute("class", "resultItemImageFrame");
-  if (nodeType === "COMPONENT") image.setAttribute("class", "resultItemImageComponent");
+  if (node.type === "PAGE") image.setAttribute("class", "resultItemImagePage");
+  if (node.type === "FRAME") image.setAttribute("class", "resultItemImageFrame");
+  if (node.type === "COMPONENT") image.setAttribute("class", "resultItemImageComponent");
+  if (node.type === "TEXT") image.setAttribute("class", "resultItemImageText");
+  if (node.type === "INSTANCE") image.setAttribute("class", "resultItemImageInstance"); 
+  if (node.type === "VECTOR" || node.type === "STAR" || node.type === "LINE" || node.type === "ELLIPSE" || node.type === "POLYGON"|| node.type === "RECTANGLE") image.setAttribute("class", "resultItemImageVector"); 
   
   newListItem.appendChild(image);
   newListItem.appendChild(text);
-  
+
   newListItem.addEventListener("click", function( event ) {   
     document.getElementById('searchField').focus();
+    
     parent.postMessage({ 
       pluginMessage: { 
         type: 'JUMP', 
-        id } 
+        id: node.id} 
       }, 
       '*');
   }, false);
