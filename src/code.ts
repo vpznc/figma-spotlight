@@ -52,7 +52,50 @@ if ((topFrames.length + pages.length) > 0) {
 //recents.push(pages[0], topFrames[0], topFrames[2]);
 
 //console.log(recents);
-var recentsArray = figma.clientStorage.getAsync('recents');
+var recents1 = figma.root.getPluginData("recents1");
+var recents2 = figma.root.getPluginData("recents2");
+var recents3 = figma.root.getPluginData("recents3");
+
+if (recents1 != "") {
+  var recentNode = figma.getNodeById(recents1);
+  figma.ui.postMessage({ 
+    type: 'RECENT', 
+    node: {
+      id: recentNode.id,
+      name: recentNode.name,
+      type: recentNode.type
+    }
+  });
+}
+else {
+  figma.ui.postMessage({type: 'NORECENTS'});
+}
+
+if (recents2 != "") {
+  var recentNode = figma.getNodeById(recents2);
+  figma.ui.postMessage({ 
+    type: 'RECENT', 
+    node: {
+      id: recentNode.id,
+      name: recentNode.name,
+      type: recentNode.type
+    }
+  });
+}
+
+if (recents3 != "") {
+  var recentNode = figma.getNodeById(recents3);
+  figma.ui.postMessage({ 
+    type: 'RECENT', 
+    node: {
+      id: recentNode.id,
+      name: recentNode.name,
+      type: recentNode.type
+    }
+  });
+}
+
+/*var recentsArray = figma.clientStorage.getAsync('recents');
 
 recentsArray.then(function(asyncRecents) {
   if (asyncRecents.length != 0) {
@@ -68,7 +111,7 @@ recentsArray.then(function(asyncRecents) {
       type: 'NORECENTS'
     });
   }
-});
+});*/
 
 /*recents.forEach(element => {
   figma.ui.postMessage({ 
@@ -133,8 +176,23 @@ figma.ui.onmessage = message => {
       figma.currentPage = node;
     }
 
-    //Recents magic
+    //Recents magic ------- ----- ------ ------
     
+    var recents1 = figma.root.getPluginData("recents1");
+    var recents2 = figma.root.getPluginData("recents2");
+
+    if (recents1 != "") {
+      figma.root.setPluginData("recents2", recents1);
+    }
+
+    if (recents2 != "") {
+      figma.root.setPluginData("recents3", recents2);
+    }
+
+    figma.root.setPluginData("recents1", nodeId);
+    //console.log(figma.root.getPluginData("recents1"));
+
+    /*
     var storage = figma.clientStorage.getAsync('recents');
     
     storage.then(function(asyncRecents) {
@@ -150,9 +208,7 @@ figma.ui.onmessage = message => {
       newRecents.push(asyncRecents[1]);
       
       figma.clientStorage.setAsync('recents', newRecents);
-    });
-
-    
+    });*/
 
     //figma.closePlugin();
   }
