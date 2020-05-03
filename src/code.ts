@@ -108,6 +108,8 @@ figma.ui.onmessage = message => {
       }    
     }
 
+    figma.ui.postMessage({type: 'HILIGHTFIRST'});
+
   }
 
   if (message.type === 'UP') {
@@ -138,7 +140,7 @@ figma.ui.onmessage = message => {
       figma.currentPage = node;
     }
 
-    figma.closePlugin();
+    //figma.closePlugin();
   }
 }
 
