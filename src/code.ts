@@ -1,9 +1,9 @@
-var recents = [];
-//array with current search results to quickly go throught them
+let maxRecentsCount = 5;
 
 figma.showUI(__html__, { width: 320, height: 380});
 
 //find specific page and save results to results array
+//topFrames - all layers in file
 const topFrames = figma.root.children 
 .map(page => //The map() method creates a new array populated with the results of calling a provided function on every element in the calling array
   //creating new array and calling the following function on each element of the array
@@ -45,82 +45,14 @@ topFrames.forEach(element => {
   });
 });
 
+outputRecents();
+
 if ((topFrames.length + pages.length) > 0) {
   figma.ui.postMessage({type: 'HILIGHTFIRST'});
 }
 
-//recents.push(pages[0], topFrames[0], topFrames[2]);
-
-//console.log(recents);
-var recents1 = figma.root.getPluginData("recents1");
-var recents2 = figma.root.getPluginData("recents2");
-var recents3 = figma.root.getPluginData("recents3");
-
-if (recents1 != "") {
-  var recentNode = figma.getNodeById(recents1);
-  figma.ui.postMessage({ 
-    type: 'RECENT', 
-    node: {
-      id: recentNode.id,
-      name: recentNode.name,
-      type: recentNode.type
-    }
-  });
-}
-else {
-  figma.ui.postMessage({type: 'NORECENTS'});
-}
-
-if (recents2 != "") {
-  var recentNode = figma.getNodeById(recents2);
-  figma.ui.postMessage({ 
-    type: 'RECENT', 
-    node: {
-      id: recentNode.id,
-      name: recentNode.name,
-      type: recentNode.type
-    }
-  });
-}
-
-if (recents3 != "") {
-  var recentNode = figma.getNodeById(recents3);
-  figma.ui.postMessage({ 
-    type: 'RECENT', 
-    node: {
-      id: recentNode.id,
-      name: recentNode.name,
-      type: recentNode.type
-    }
-  });
-}
-
-/*var recentsArray = figma.clientStorage.getAsync('recents');
-
-recentsArray.then(function(asyncRecents) {
-  if (asyncRecents.length != 0) {
-    asyncRecents.forEach(element => {
-      figma.ui.postMessage({ 
-        type: 'RECENT', 
-        node: element
-      });
-    })
-  }
-  else {
-    figma.ui.postMessage({ 
-      type: 'NORECENTS'
-    });
-  }
-});*/
-
-/*recents.forEach(element => {
-  figma.ui.postMessage({ 
-    type: 'RECENT', 
-    node: element
-  });
-});*/
-
-//figma.clientStorage.setAsync('recents', recents);
+// End of setting everything plugin need to have on launch
+// Start of processing callbacks from the ui.ts
 
 figma.ui.onmessage = message => {
   if (message.type === 'CLOSE') {
@@ -175,42 +107,45 @@ figma.ui.onmessage = message => {
     if (node.type === "PAGE") {
       figma.currentPage = node;
     }
-
-    //Recents magic ------- ----- ------ ------
     
-    var recents1 = figma.root.getPluginData("recents1");
-    var recents2 = figma.root.getPluginData("recents2");
-
-    if (recents1 != "") {
-      figma.root.setPluginData("recents2", recents1);
-    }
-
-    if (recents2 != "") {
-      figma.root.setPluginData("recents3", recents2);
+    // Appending page to recents
+    for (var counter = maxRecentsCount; counter >= 0; counter--) {
+      var recents = figma.root.getPluginData("recents" + counter);
+      
+      if (recents != "") {
+        figma.root.setPluginData("recents" + (counter + 1), recents);
+      }
     }
 
     figma.root.setPluginData("recents1", nodeId);
-    //console.log(figma.root.getPluginData("recents1"));
 
-    /*
-    var storage = figma.clientStorage.getAsync('recents');
-    
-    storage.then(function(asyncRecents) {
-      var newRecents = [];
+    outputRecents();
 
-      newRecents.push({
-        id: node.id,
-        name: node.name,
-        type: node.type
-      });
-
-      newRecents.push(asyncRecents[0]);
-      newRecents.push(asyncRecents[1]);
-      
-      figma.clientStorage.setAsync('recents', newRecents);
-    });*/
-
-    //figma.closePlugin();
+    figma.closePlugin();
   }
 }
 
+function outputRecents() {
+  var localCounter = 0;
+
+  for (var counter = 1; counter <= maxRecentsCount; counter++) {
+    var recent = figma.root.getPluginData("recents" + counter);
+
+    if (recent != "") {
+      localCounter++;
+      var recentNode = figma.getNodeById(recent);  
+      figma.ui.postMessage({ 
+        type: 'RECENT', 
+        node: {
+          id: recentNode.id,
+          name: recentNode.name,
+          type: recentNode.type
+        }
+      });
+    }
+    else {
+      if (counter == 1) figma.ui.postMessage({type: 'NORECENTS'});
+      break;
+    }
+  }
+}

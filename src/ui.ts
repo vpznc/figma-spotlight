@@ -1,69 +1,112 @@
 import './ui.css'
 import 'jquery'
 
-//document.onkeyup = PresTab;
-var selectPointer = 0; 
+var selectPointer = 0;
 
 document.addEventListener('keydown', keyboardInput);
-
 function keyboardInput(key: KeyboardEvent) {
-    var keycode = key.keyCode;
+  var keycode = key.keyCode;
 
-    if (keycode == 16) {
-        key.preventDefault();
+  //Key tab
+  if (keycode == 16) {
+      key.preventDefault();
+  }
+
+  //Key escape
+  if (keycode == 27) {
+      parent.postMessage({ pluginMessage: { 
+        type: 'CLOSE' 
+      } 
+    }, '*')
+  }
+
+  //Key up
+  if (keycode == 38) {
+    if (selectPointer != 0) {
+      selectPointer--;
+
+      var results = document.getElementById('resultsList').children;
+      var recents = document.getElementById('recentsList').children;
+
+      if (selectPointer < (recents.length - 1)) {
+        // moving through recents 
+        recents[selectPointer].setAttribute("class", "resultItemHilight");
+        recents[selectPointer + 1].setAttribute("class", "resultItem");
+
+        if (!isElementInViewport(recents[selectPointer])) {
+          let scrollPosition = $(recents[selectPointer]).offset().top - 12
+          $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
+        }
+
+      }
+      else if (selectPointer == (recents.length - 1)) {
+        // in the middle 
+        recents[recents.length - 1].setAttribute("class", "resultItemHilight");
+        results[0].setAttribute("class", "resultItem");
+
+        if (!isElementInViewport(recents[recents.length - 1])) {
+          let scrollPosition = $(recents[recents.length - 1]).offset().top - 12
+          $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
+        }
+
+      } 
+      else {
+        // moving through results
+        results[selectPointer - recents.length].setAttribute("class", "resultItemHilight");
+        results[selectPointer - recents.length + 1].setAttribute("class", "resultItem");
+
+        if (!isElementInViewport(results[selectPointer - recents.length])) {
+          let scrollPosition = $(results[selectPointer - recents.length]).offset().top - 12
+          $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
+        }
+
+      }
     }
+  }
 
-    if (keycode == 27) {
-        parent.postMessage({ pluginMessage: { 
-          type: 'CLOSE' 
+  //Key down
+  if (keycode == 40) {  
+    var results = document.getElementById('resultsList').children;
+    var recents = document.getElementById('recentsList').children;
+
+    if ((results.length + recents.length - 1) != selectPointer) {
+      selectPointer++;
+
+      if (selectPointer < recents.length) {
+        // moving through recents 
+        recents[selectPointer].setAttribute("class", "resultItemHilight");
+        recents[selectPointer - 1].setAttribute("class", "resultItem");
+      }
+      else if (selectPointer == recents.length) {
+        // in the middle between recents <> results
+        results[selectPointer - recents.length].setAttribute("class", "resultItemHilight");
+        recents[recents.length - 1].setAttribute("class", "resultItem");
+      }
+      else {
+        // moving through results
+        results[selectPointer - recents.length].setAttribute("class", "resultItemHilight");
+        results[selectPointer - recents.length - 1].setAttribute("class", "resultItem");
+                
+        if (!isElementInViewport(results[selectPointer - recents.length])) {
+          let scrollPosition = 48 + $(results[selectPointer - recents.length]).offset().top - window.innerHeight  
+          $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
         } 
-      }, '*')
-    }
-
-    if (keycode == 38) {
-      if (selectPointer != 0) {
-        var r = document.getElementById('resultsList').children;
-        
-        r[selectPointer].setAttribute("class", "resultItem");
-        r[selectPointer-1].setAttribute("class", "resultItemHilight");
-
-        selectPointer--;
-
-        if (!isElementInViewport(r[selectPointer])) {
-          let scrollPosition = $(r[selectPointer]).offset().top - 12
-          $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
-        }
       }
-    }
 
-    if (keycode == 40) {    
-      var r = document.getElementById('resultsList').children;
-
-      if ((r.length - 1) != selectPointer) {
-      
-        r[selectPointer].setAttribute("class", "resultItem");
-        r[selectPointer+1].setAttribute("class", "resultItemHilight");
-        
-        selectPointer++;
-        
-        if (!isElementInViewport(r[selectPointer])) {
-          let scrollPosition = 48 + $(r[selectPointer]).offset().top - window.innerHeight  
-          $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
-        }
-      }
     }
+  }
 
-    if (keycode == 13) {
-      (<HTMLInputElement>document.getElementById('resultsList').children[selectPointer]).click();
-    }
+  if (keycode == 13) {
+    (<HTMLInputElement>document.getElementById('resultsList').children[selectPointer]).click();
+  }
 }
 
-var recents = document.getElementById("recents");
-var resultsHeader = document.getElementById("resultsHeader");
-
+// processing input to main search filed
 document.getElementById('searchField').focus();
 document.getElementById('searchField').oninput = () => {
   selectPointer = 0;
+  var recents = document.getElementById("recents");
+  var resultsHeader = document.getElementById("resultsHeader");
 
   const searchValue = (<HTMLInputElement>document.getElementById('searchField')).value;
   if (searchValue == "") {
@@ -81,7 +124,7 @@ document.getElementById('searchField').oninput = () => {
     $(resultsHeader).hide();
     resultsHeader.innerHTML = "Last search";
 
-    clearResultsUI();
+    document.getElementById("resultsList").innerHTML = "";
     
     parent.postMessage({ 
       pluginMessage: { 
@@ -109,8 +152,15 @@ window.onmessage = async (event) => {
   }
 
   if (event.data.pluginMessage.type === 'HILIGHTFIRST') {
-    var r = document.getElementById('resultsList').children;
-    if (r.length != 0) r[0].setAttribute("class", "resultItemHilight");
+    var results = document.getElementById('resultsList').children;
+    var recents = document.getElementById('recentsList').children;
+    
+    if (recents.length != 0) {
+      recents[0].setAttribute("class", "resultItemHilight");
+    }
+    else if (results.length != 0) { 
+      results[0].setAttribute("class", "resultItemHilight");
+    }
   }
 } 
 
@@ -137,6 +187,7 @@ function showNewResultUI(node, newResult) {
   newListItem.appendChild(text);
 
   newListItem.addEventListener("click", function( event ) {   
+    document.getElementById("recentsList").innerHTML = "";
     document.getElementById('searchField').focus();
     
     parent.postMessage({ 
@@ -147,20 +198,8 @@ function showNewResultUI(node, newResult) {
       '*');
   }, false);
 
-  if (newResult) {
-    document.getElementById("resultsList").appendChild(newListItem);
-  }
-  else {
-    document.getElementById("recentsList").appendChild(newListItem);
-  }
-}
-
-// clear results by removing all child from this div
-function clearResultsUI() {
-  const list = document.getElementById("resultsList");
-  while (list.firstChild) {
-    list.removeChild(list.firstChild);
-  }
+  if (newResult) document.getElementById("resultsList").appendChild(newListItem);
+  else document.getElementById("recentsList").appendChild(newListItem);
 }
 
 function isElementInViewport(el) {
