@@ -41,14 +41,21 @@ function keyboardInput(key: KeyboardEvent) {
       }
       else if (selectPointer == (recents.length - 1)) {
         // in the middle 
-        recents[recents.length - 1].setAttribute("class", "resultItemHilight");
-        results[0].setAttribute("class", "resultItem");
-
-        if (!isElementInViewport(recents[recents.length - 1])) {
-          let scrollPosition = $(recents[recents.length - 1]).offset().top - 12
-          $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
+        
+        if ($(document.getElementById("recents")).is(":visible")) {
+          console.log("Imhere");
+          
+          recents[recents.length - 1].setAttribute("class", "resultItemHilight");
+          results[0].setAttribute("class", "resultItem");
+  
+          if (!isElementInViewport(recents[recents.length - 1])) {
+            let scrollPosition = $(recents[recents.length - 1]).offset().top - 12
+            $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
+          }  
         }
-
+        else {
+          selectPointer++;
+        }
       } 
       else {
         // moving through results
@@ -97,7 +104,20 @@ function keyboardInput(key: KeyboardEvent) {
   }
 
   if (keycode == 13) {
-    (<HTMLInputElement>document.getElementById('resultsList').children[selectPointer]).click();
+    var recents = document.getElementById('recentsList').children;  
+
+    if ($(document.getElementById("recents")).is(":hidden")) { 
+      var jumpListItemNumber = selectPointer - recents.length;
+      (<HTMLInputElement>document.getElementById('resultsList').children[jumpListItemNumber]).click();
+    }
+    else {
+      if (selectPointer < recents.length) {
+        (<HTMLInputElement>document.getElementById('recentsList').children[selectPointer]).click();
+      }
+      else {
+        (<HTMLInputElement>document.getElementById('resultsList').children[selectPointer - recents.length]).click();
+      }
+    }
   }
 }
 
@@ -132,7 +152,6 @@ document.getElementById('searchField').oninput = () => {
         searchValue 
       } 
     }, '*');
-
   }
 }
 
@@ -154,13 +173,29 @@ window.onmessage = async (event) => {
   if (event.data.pluginMessage.type === 'HILIGHTFIRST') {
     var results = document.getElementById('resultsList').children;
     var recents = document.getElementById('recentsList').children;
-    
-    if (recents.length != 0) {
-      recents[0].setAttribute("class", "resultItemHilight");
+
+    if ($(document.getElementById("recents")).is(":hidden")) {
+      if (results.length != 0) {
+        results[0].setAttribute("class", "resultItemHilight");
+        selectPointer = recents.length;
+      }
     }
-    else if (results.length != 0) { 
-      results[0].setAttribute("class", "resultItemHilight");
+    else {
+      if (recents.length != 0) {
+        recents[0].setAttribute("class", "resultItemHilight");
+      }
+      else if (results.length != 0) { 
+        results[0].setAttribute("class", "resultItemHilight");
+      }
     }
+
+    /*
+    var recentsList = document.getElementById('recentsList').children;
+    var resultsList = document.getElementById('resultsList').children;
+
+    resultsList[0].setAttribute("class", "resultItemHilight");
+    selectPointer = recentsList.length - 1;
+    */
   }
 } 
 
