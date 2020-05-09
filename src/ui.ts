@@ -188,14 +188,6 @@ window.onmessage = async (event) => {
         results[0].setAttribute("class", "resultItemHilight");
       }
     }
-
-    /*
-    var recentsList = document.getElementById('recentsList').children;
-    var resultsList = document.getElementById('resultsList').children;
-
-    resultsList[0].setAttribute("class", "resultItemHilight");
-    selectPointer = recentsList.length - 1;
-    */
   }
 } 
 
@@ -237,8 +229,8 @@ function showNewResultUI(node, newResult) {
   else document.getElementById("recentsList").appendChild(newListItem);
 }
 
-function isElementInViewport(el) {
-  var rect = el.getBoundingClientRect();
+function isElementInViewport(element) {
+  var rect = element.getBoundingClientRect();
   return (
     rect.top >= 0 &&
     rect.left >= 0 &&
@@ -252,9 +244,12 @@ function isElementInViewport(el) {
 let helpFab = document.getElementById("helpFab");
 let help = document.getElementById("help");
 
+let fabHeight = 182;
+let fabWidth = 175;
+
 $(help).animate({
-  width: (175 - 15),
-  height: (229 - 15),
+  width: (fabWidth - 15),
+  height: (fabHeight - 15),
   opacity: 0,
 }, 0);
 
@@ -263,8 +258,8 @@ $(help).hide();
 helpFab.addEventListener("click", function( event ) {   
   $(help).show();
   $(help).animate({
-    width: 175,
-    height: 229,
+    width: fabWidth,
+    height: fabHeight,
     opacity: 1,
     bottom: 15,
   }, 120);
@@ -279,8 +274,8 @@ help.addEventListener("mouseleave", function( event ) {
     document.getElementById('searchField').focus(); 
   }
   $(help).animate({
-    width: (175 - 5),
-    height: (229 - 5),
+    width: (fabWidth - 5),
+    height: (fabHeight - 5),
     opacity: 0,
     bottom: 10,
   }, 
@@ -288,8 +283,8 @@ help.addEventListener("mouseleave", function( event ) {
   function() {
     $(help).hide();
     $(help).animate({
-      width: (175 - 15),
-      height: (229 - 15),
+      width: (fabWidth - 15),
+      height: (fabHeight - 15),
       opacity: 0,
       bottom: 10,
     }, 

@@ -107,21 +107,40 @@ figma.ui.onmessage = message => {
     if (node.type === "PAGE") {
       figma.currentPage = node;
     }
+
+    // Recents mechanic 
+    // Checking if node is already in recents
+
+    var nodeIsRecents = false;
+    var nodeRecentsPosition = 0;
+
+    for (nodeRecentsPosition = maxRecentsCount; nodeRecentsPosition >= 0; nodeRecentsPosition--) {
+      var recents = figma.root.getPluginData("recents" + nodeRecentsPosition);
+      if (recents == nodeId) {
+        nodeIsRecents = true;
+        break;
+      }
+    }
+
+    var moveStart = maxRecentsCount;
     
-    // Appending page to recents
-    for (var counter = maxRecentsCount; counter >= 0; counter--) {
+    // If page is in alreadt in recents - moving it up
+    if (nodeIsRecents) {
+      moveStart = nodeRecentsPosition - 1;
+    }
+
+    for (var counter = moveStart; counter >= 0; counter--) {
       var recents = figma.root.getPluginData("recents" + counter);
       
       if (recents != "") {
         figma.root.setPluginData("recents" + (counter + 1), recents);
       }
     }
-
     figma.root.setPluginData("recents1", nodeId);
-
+    
     outputRecents();
 
-    figma.closePlugin();
+    //figma.closePlugin();
   }
 }
 
