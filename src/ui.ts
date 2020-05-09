@@ -34,22 +34,24 @@ function keyboardInput(key: KeyboardEvent) {
         recents[selectPointer + 1].setAttribute("class", "resultItem");
 
         if (!isElementInViewport(recents[selectPointer])) {
-          let scrollPosition = $(recents[selectPointer]).offset().top - 12
+          let scrollPosition = $(recents[selectPointer]).offset().top - 32
           $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
+        }
+
+        if (selectPointer == 0) {
+          $("html, body").stop().animate({scrollTop: 0}, 20);
         }
 
       }
       else if (selectPointer == (recents.length - 1)) {
-        // in the middle 
+        // in the middle between recents and all results
         
         if ($(document.getElementById("recents")).is(":visible")) {
-          console.log("Imhere");
-          
           recents[recents.length - 1].setAttribute("class", "resultItemHilight");
           results[0].setAttribute("class", "resultItem");
   
           if (!isElementInViewport(recents[recents.length - 1])) {
-            let scrollPosition = $(recents[recents.length - 1]).offset().top - 12
+            let scrollPosition = $(recents[recents.length - 1]).offset().top - 32
             $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
           }  
         }
@@ -63,7 +65,7 @@ function keyboardInput(key: KeyboardEvent) {
         results[selectPointer - recents.length + 1].setAttribute("class", "resultItem");
 
         if (!isElementInViewport(results[selectPointer - recents.length])) {
-          let scrollPosition = $(results[selectPointer - recents.length]).offset().top - 12
+          let scrollPosition = $(results[selectPointer - recents.length]).offset().top - 32
           $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
         }
 
@@ -95,7 +97,7 @@ function keyboardInput(key: KeyboardEvent) {
         results[selectPointer - recents.length - 1].setAttribute("class", "resultItem");
                 
         if (!isElementInViewport(results[selectPointer - recents.length])) {
-          let scrollPosition = 48 + $(results[selectPointer - recents.length]).offset().top - window.innerHeight  
+          let scrollPosition = 66 + $(results[selectPointer - recents.length]).offset().top - window.innerHeight  
           $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
         } 
       }
@@ -103,14 +105,18 @@ function keyboardInput(key: KeyboardEvent) {
     }
   }
 
+  //Enter 
   if (keycode == 13) {
     var recents = document.getElementById('recentsList').children;  
 
+    // Based if recents visible simulating click eather in recents or results
     if ($(document.getElementById("recents")).is(":hidden")) { 
+      // Search results
       var jumpListItemNumber = selectPointer - recents.length;
       (<HTMLInputElement>document.getElementById('resultsList').children[jumpListItemNumber]).click();
     }
     else {
+      //Default launch state
       if (selectPointer < recents.length) {
         (<HTMLInputElement>document.getElementById('recentsList').children[selectPointer]).click();
       }
@@ -121,7 +127,7 @@ function keyboardInput(key: KeyboardEvent) {
   }
 }
 
-// processing input to main search filed
+// Processing input to main search filed
 document.getElementById('searchField').focus();
 document.getElementById('searchField').oninput = () => {
   selectPointer = 0;
@@ -155,7 +161,7 @@ document.getElementById('searchField').oninput = () => {
   }
 }
 
-// functions to update ui from code.ts
+// Functions to update ui from code.ts
 window.onmessage = async (event) => {
   if (event.data.pluginMessage.type === 'NEWRESULT') {
     showNewResultUI(event.data.pluginMessage.node, true);
@@ -191,7 +197,7 @@ window.onmessage = async (event) => {
   }
 } 
 
-// show new result list item
+// Append new list item to Resuts or Recents divs
 function showNewResultUI(node, newResult) {
   var newListItem = document.createElement("div");
   var image = document.createElement("div");
@@ -204,11 +210,11 @@ function showNewResultUI(node, newResult) {
 
   image.setAttribute("class", "resultItemImageLayer");
   if (node.type === "PAGE") image.setAttribute("class", "resultItemImagePage");
-  if (node.type === "FRAME") image.setAttribute("class", "resultItemImageFrame");
-  if (node.type === "COMPONENT") image.setAttribute("class", "resultItemImageComponent");
-  if (node.type === "TEXT") image.setAttribute("class", "resultItemImageText");
-  if (node.type === "INSTANCE") image.setAttribute("class", "resultItemImageInstance"); 
-  if (node.type === "VECTOR" || node.type === "STAR" || node.type === "LINE" || node.type === "ELLIPSE" || node.type === "POLYGON"|| node.type === "RECTANGLE") image.setAttribute("class", "resultItemImageVector"); 
+  else if (node.type === "FRAME") image.setAttribute("class", "resultItemImageFrame");
+  else if (node.type === "COMPONENT") image.setAttribute("class", "resultItemImageComponent");
+  else if (node.type === "TEXT") image.setAttribute("class", "resultItemImageText");
+  else if (node.type === "INSTANCE") image.setAttribute("class", "resultItemImageInstance"); 
+  else if (node.type === "VECTOR" || node.type === "STAR" || node.type === "LINE" || node.type === "ELLIPSE" || node.type === "POLYGON"|| node.type === "RECTANGLE") image.setAttribute("class", "resultItemImageVector"); 
   
   newListItem.appendChild(image);
   newListItem.appendChild(text);
