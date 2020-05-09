@@ -121,10 +121,12 @@ figma.ui.onmessage = message => {
         break;
       }
     }
+    
+    // If page is in already in recents - moving it up, 
+    // If else moving the whole recents array by 1 and appending new node 
 
     var moveStart = maxRecentsCount;
-    
-    // If page is in alreadt in recents - moving it up
+
     if (nodeIsRecents) {
       moveStart = nodeRecentsPosition - 1;
     }
@@ -139,8 +141,7 @@ figma.ui.onmessage = message => {
     figma.root.setPluginData("recents1", nodeId);
     
     outputRecents();
-
-    //figma.closePlugin();
+    figma.closePlugin();
   }
 }
 
