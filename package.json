@@ -4,7 +4,10 @@
   "description": "Simple plugin to find anything you need in figma file",
   "main": "webpack.config.js",
   "dependencies": {
+    "@types/amplitude-js": "^5.11.0",
     "@types/jquery": "^3.3.36",
+    "amplitude": "^4.0.3",
+    "amplitude-js": "^6.2.0",
     "jquery": "^3.5.0"
   },
   "devDependencies": {

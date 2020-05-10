@@ -2,6 +2,8 @@ let maxRecentsCount = 5;
 
 figma.showUI(__html__, { width: 320, height: 380});
 
+outputRecents();
+
 //find specific page and save results to results array
 //topFrames - all layers in file
 const topFrames = figma.root.children 
@@ -45,7 +47,7 @@ topFrames.forEach(element => {
   });
 });
 
-outputRecents();
+//console.log(figma.root.id);
 
 if ((topFrames.length + pages.length) > 0) {
   figma.ui.postMessage({type: 'HILIGHTFIRST'});
@@ -144,6 +146,24 @@ figma.ui.onmessage = message => {
     figma.closePlugin();
   }
 }
+
+// Analytics 
+// Getting fileid from plugin data 
+// If file doesn't have it - create 
+
+var documentId = figma.root.getPluginData("documentId");
+
+if (documentId == "") {
+  documentId = Math.random().toString(36).substr(2, 9);
+  figma.root.setPluginData("documentId", documentId);
+}
+
+//console.log('here');
+figma.ui.postMessage({ 
+  type: 'ANALYTICSID', 
+  documentId: documentId
+});
+
 
 function outputRecents() {
   var localCounter = 0;

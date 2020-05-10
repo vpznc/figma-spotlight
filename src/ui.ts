@@ -1,6 +1,8 @@
 import './ui.css'
 import 'jquery'
+import { AmplitudeClient } from 'amplitude-js';
 
+let version = '1.0.0';
 var selectPointer = 0;
 
 document.addEventListener('keydown', keyboardInput);
@@ -39,7 +41,7 @@ function keyboardInput(key: KeyboardEvent) {
         }
 
         if (selectPointer == 0) {
-          $("html, body").stop().animate({scrollTop: 0}, 20);
+          $("html, body").stop().animate({scrollTop: 0}, 60);
         }
 
       }
@@ -161,8 +163,19 @@ document.getElementById('searchField').oninput = () => {
   }
 }
 
+const amplitude = require('amplitude-js');
+
 // Functions to update ui from code.ts
 window.onmessage = async (event) => {
+  if (event.data.pluginMessage.type === 'ANALYTICSID') {
+    let documentId = event.data.pluginMessage.documentId;
+    amplitude.getInstance().init("0b2d490507691236e7d1cc9734bd1ce4", documentId, {'Version': version});
+    amplitude.getInstance().logEvent('launch');
+
+    //var identify = new amplitude.Identify().set('version', version);
+    //amplitude.getInstance().identify(identify);
+  }
+
   if (event.data.pluginMessage.type === 'NEWRESULT') {
     showNewResultUI(event.data.pluginMessage.node, true);
   }
@@ -198,7 +211,7 @@ window.onmessage = async (event) => {
 } 
 
 // Append new list item to Resuts or Recents divs
-function showNewResultUI(node, newResult) {
+function showNewResultUI(node, isResult) {
   var newListItem = document.createElement("div");
   var image = document.createElement("div");
   var text = document.createElement("div");
@@ -220,9 +233,7 @@ function showNewResultUI(node, newResult) {
   newListItem.appendChild(text);
 
   newListItem.addEventListener("click", function( event ) {   
-    document.getElementById("recentsList").innerHTML = "";
-    document.getElementById('searchField').focus();
-    
+    amplitude.getInstance().logEvent('jump', {'recents' : !isResult});
     parent.postMessage({ 
       pluginMessage: { 
         type: 'JUMP', 
@@ -231,8 +242,12 @@ function showNewResultUI(node, newResult) {
       '*');
   }, false);
 
-  if (newResult) document.getElementById("resultsList").appendChild(newListItem);
-  else document.getElementById("recentsList").appendChild(newListItem);
+  if (isResult) { 
+    document.getElementById("resultsList").appendChild(newListItem);
+  }
+  else {
+    document.getElementById("recentsList").appendChild(newListItem);
+  }
 }
 
 function isElementInViewport(element) {
@@ -245,7 +260,7 @@ function isElementInViewport(element) {
   );
 }
 
-//FAB UI
+// FAB UI
 
 let helpFab = document.getElementById("helpFab");
 let help = document.getElementById("help");
