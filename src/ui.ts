@@ -1,13 +1,76 @@
 import './ui.css'
 import 'jquery'
-import { AmplitudeClient } from 'amplitude-js';
+import 'jquery-ui-bundle'
 
-let version = '1.0.0';
-var selectPointer = 0;
+const amplitude = require('amplitude-js');
+
+const version = '1.0.1';
+const debug = true;
+
+const placeholders = [
+  "Good design is honest…", 
+  "Good design is aesthetic…",
+  "Good design is unobtrusive…",
+  "Good design is long-lasting…",
+  "Good design is innovative…",
+  "Push it further…", 
+  "Too much white space…", 
+  "Simplify…", 
+  "Play with color…", 
+  "Not quite there…",
+  "Too noisy…", 
+  "Just do it…",
+  "Make it work…",
+  "1px right…",
+  "1px left…",
+  "Something is off…",
+  "Almost there…",
+  "What are our metrics?…",
+  "What problem you're solving?…",
+  "How it will look on mobile?…",
+  "Is this an ab test?…",
+  "What are users saying?…",
+  "Who are we de signing for?…",
+  "Jony Ive approves your design…"
+];
+let selectPointer = 0;
+
+// Processing input to main search filed
+var searchField = <HTMLInputElement>document.getElementById('searchField');
+searchField.placeholder = placeholders[Math.ceil(Math.random() * (placeholders.length - 1))];
+searchField.focus();
+searchField.oninput = () => {
+  const searchValue = searchField.value;
+  
+  let recents = document.getElementById("recents");
+  let resultsHeader = document.getElementById("resultsHeader");
+
+  selectPointer = 0;
+  
+  if (searchValue == "") {
+    if (document.getElementById('recentsList').children.length != 0) {
+      $(recents).show();
+    }
+    $(resultsHeader).show();
+  }
+  else {
+    $(recents).hide();
+    $(resultsHeader).hide();
+  }
+
+  document.getElementById("resultsList").innerHTML = "";
+
+  parent.postMessage({ 
+    pluginMessage: { 
+      type: 'CHECK', 
+      searchValue 
+    } 
+  }, '*');
+}
 
 document.addEventListener('keydown', keyboardInput);
 function keyboardInput(key: KeyboardEvent) {
-  var keycode = key.keyCode;
+  let keycode = key.keyCode;
 
   //Key tab
   if (keycode == 16) {
@@ -24,36 +87,37 @@ function keyboardInput(key: KeyboardEvent) {
 
   //Key up
   if (keycode == 38) {
+    key.preventDefault();
     if (selectPointer != 0) {
+      let resultsList = document.getElementById('resultsList').children;
+      let recentsList = document.getElementById('recentsList').children;
+      let recentsLength = recentsList.length;
+
       selectPointer--;
 
-      var results = document.getElementById('resultsList').children;
-      var recents = document.getElementById('recentsList').children;
-
-      if (selectPointer < (recents.length - 1)) {
+      if (selectPointer < (recentsLength - 1)) {
         // moving through recents 
-        recents[selectPointer].setAttribute("class", "resultItemHilight");
-        recents[selectPointer + 1].setAttribute("class", "resultItem");
-
-        if (!isElementInViewport(recents[selectPointer])) {
-          let scrollPosition = $(recents[selectPointer]).offset().top - 32
-          $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
-        }
+        recentsList[selectPointer].setAttribute("class", "resultItemHilight");
+        recentsList[selectPointer + 1].setAttribute("class", "resultItem");
 
         if (selectPointer == 0) {
           $("html, body").stop().animate({scrollTop: 0}, 60);
         }
+        else if (!isElementInViewport(recentsList[selectPointer])) {
+          let scrollPosition = $(recentsList[selectPointer]).offset().top - 32
+          $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
+        }
 
       }
-      else if (selectPointer == (recents.length - 1)) {
+      else if (selectPointer == (recentsLength - 1)) {
         // in the middle between recents and all results
         
         if ($(document.getElementById("recents")).is(":visible")) {
-          recents[recents.length - 1].setAttribute("class", "resultItemHilight");
-          results[0].setAttribute("class", "resultItem");
+          recentsList[recentsList.length - 1].setAttribute("class", "resultItemHilight");
+          resultsList[0].setAttribute("class", "resultItem");
   
-          if (!isElementInViewport(recents[recents.length - 1])) {
-            let scrollPosition = $(recents[recents.length - 1]).offset().top - 32
+          if (!isElementInViewport(recentsList[recentsLength - 1])) {
+            let scrollPosition = $(recentsList[recentsLength - 1]).offset().top - 32
             $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
           }  
         }
@@ -63,43 +127,47 @@ function keyboardInput(key: KeyboardEvent) {
       } 
       else {
         // moving through results
-        results[selectPointer - recents.length].setAttribute("class", "resultItemHilight");
-        results[selectPointer - recents.length + 1].setAttribute("class", "resultItem");
+        resultsList[selectPointer - recentsLength].setAttribute("class", "resultItemHilight");
+        resultsList[selectPointer - recentsLength + 1].setAttribute("class", "resultItem");
 
-        if (!isElementInViewport(results[selectPointer - recents.length])) {
-          let scrollPosition = $(results[selectPointer - recents.length]).offset().top - 32
+        if (!isElementInViewport(resultsList[selectPointer - recentsLength])) {
+          let scrollPosition = $(resultsList[selectPointer - recentsLength]).offset().top - 32
           $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
         }
-
       }
+      
     }
   }
 
   //Key down
   if (keycode == 40) {  
-    var results = document.getElementById('resultsList').children;
-    var recents = document.getElementById('recentsList').children;
+    key.preventDefault();
 
-    if ((results.length + recents.length - 1) != selectPointer) {
+    let resultsList = document.getElementById('resultsList').children;
+    let recentsList = document.getElementById('recentsList').children;
+    let recentsLength = recentsList.length;
+    let resultsLength = resultsList.length;
+
+    if ((resultsLength + recentsLength - 1) != selectPointer) {
       selectPointer++;
 
-      if (selectPointer < recents.length) {
+      if (selectPointer < recentsLength) {
         // moving through recents 
-        recents[selectPointer].setAttribute("class", "resultItemHilight");
-        recents[selectPointer - 1].setAttribute("class", "resultItem");
+        recentsList[selectPointer].setAttribute("class", "resultItemHilight");
+        recentsList[selectPointer - 1].setAttribute("class", "resultItem");
       }
-      else if (selectPointer == recents.length) {
+      else if (selectPointer == recentsLength) {
         // in the middle between recents <> results
-        results[selectPointer - recents.length].setAttribute("class", "resultItemHilight");
-        recents[recents.length - 1].setAttribute("class", "resultItem");
+        resultsList[selectPointer - recentsLength].setAttribute("class", "resultItemHilight");
+        recentsList[recentsLength - 1].setAttribute("class", "resultItem");
       }
       else {
         // moving through results
-        results[selectPointer - recents.length].setAttribute("class", "resultItemHilight");
-        results[selectPointer - recents.length - 1].setAttribute("class", "resultItem");
+        resultsList[selectPointer - recentsLength].setAttribute("class", "resultItemHilight");
+        resultsList[selectPointer - recentsLength - 1].setAttribute("class", "resultItem");
                 
-        if (!isElementInViewport(results[selectPointer - recents.length])) {
-          let scrollPosition = 66 + $(results[selectPointer - recents.length]).offset().top - window.innerHeight  
+        if (!isElementInViewport(resultsList[selectPointer - recentsLength])) {
+          let scrollPosition = 66 + $(resultsList[selectPointer - recentsLength]).offset().top - window.innerHeight  
           $("html, body").stop().animate({scrollTop: scrollPosition}, 20);
         } 
       }
@@ -109,75 +177,33 @@ function keyboardInput(key: KeyboardEvent) {
 
   //Enter 
   if (keycode == 13) {
-    var recents = document.getElementById('recentsList').children;  
+    // Simulating click eather in recents or results
+    // Based on if recents visible 
+    let recentsList = (<HTMLDivElement>document.getElementById('recentsList')).children;
+    let resultsList = (<HTMLDivElement>document.getElementById('resultsList')).children;  
 
-    // Based if recents visible simulating click eather in recents or results
-    if ($(document.getElementById("recents")).is(":hidden")) { 
-      // Search results
-      var jumpListItemNumber = selectPointer - recents.length;
-      (<HTMLInputElement>document.getElementById('resultsList').children[jumpListItemNumber]).click();
+    // Initial launch state with recents
+    if (selectPointer < recentsList.length) {
+      (<HTMLDivElement>recentsList[selectPointer]).click();
     }
     else {
-      //Default launch state
-      if (selectPointer < recents.length) {
-        (<HTMLInputElement>document.getElementById('recentsList').children[selectPointer]).click();
-      }
-      else {
-        (<HTMLInputElement>document.getElementById('resultsList').children[selectPointer - recents.length]).click();
-      }
+      (<HTMLDivElement>resultsList[selectPointer - recentsList.length]).click();
     }
   }
 }
-
-// Processing input to main search filed
-document.getElementById('searchField').focus();
-document.getElementById('searchField').oninput = () => {
-  selectPointer = 0;
-  var recents = document.getElementById("recents");
-  var resultsHeader = document.getElementById("resultsHeader");
-
-  const searchValue = (<HTMLInputElement>document.getElementById('searchField')).value;
-  if (searchValue == "") {
-    $(recents).show();
-    $(resultsHeader).show();
-
-    parent.postMessage({ 
-      pluginMessage: { 
-        type: 'CLEAR' 
-      } 
-    }, '*');
-  }
-  else {
-    $(recents).hide();
-    $(resultsHeader).hide();
-    resultsHeader.innerHTML = "Last search";
-
-    document.getElementById("resultsList").innerHTML = "";
-    
-    parent.postMessage({ 
-      pluginMessage: { 
-        type: 'CHECK', 
-        searchValue 
-      } 
-    }, '*');
-  }
-}
-
-const amplitude = require('amplitude-js');
 
 // Functions to update ui from code.ts
 window.onmessage = async (event) => {
   if (event.data.pluginMessage.type === 'ANALYTICSID') {
     let documentId = event.data.pluginMessage.documentId;
-    amplitude.getInstance().init("0b2d490507691236e7d1cc9734bd1ce4", documentId, {'Version': version});
-    amplitude.getInstance().logEvent('launch');
-
-    //var identify = new amplitude.Identify().set('version', version);
-    //amplitude.getInstance().identify(identify);
+    if (!debug) {
+      amplitude.getInstance().init("0b2d490507691236e7d1cc9734bd1ce4", documentId, {'Version': version});
+      amplitude.getInstance().logEvent('launch');
+    }
   }
 
   if (event.data.pluginMessage.type === 'NEWRESULT') {
-    showNewResultUI(event.data.pluginMessage.node, true);
+    showNewResult(event.data.pluginMessage.node, document.getElementById("resultsList"));
   }
 
   if (event.data.pluginMessage.type === 'NORECENTS') {
@@ -186,54 +212,58 @@ window.onmessage = async (event) => {
 
   if (event.data.pluginMessage.type === 'RECENT') {
     $(document.getElementById("recents")).show();
-    showNewResultUI(event.data.pluginMessage.node, false);
+    showNewResult(event.data.pluginMessage.node, document.getElementById("recentsList"));
   }
 
   if (event.data.pluginMessage.type === 'HILIGHTFIRST') {
-    var results = document.getElementById('resultsList').children;
-    var recents = document.getElementById('recentsList').children;
+    let resultsList = document.getElementById('resultsList').children;
+    let recentsList = document.getElementById('recentsList').children;
 
     if ($(document.getElementById("recents")).is(":hidden")) {
-      if (results.length != 0) {
-        results[0].setAttribute("class", "resultItemHilight");
-        selectPointer = recents.length;
+      if (resultsList.length != 0) {
+        resultsList[0].setAttribute("class", "resultItemHilight");
+        selectPointer = recentsList.length;
       }
     }
     else {
-      if (recents.length != 0) {
-        recents[0].setAttribute("class", "resultItemHilight");
+      if (recentsList.length != 0) {
+        recentsList[0].setAttribute("class", "resultItemHilight");
       }
-      else if (results.length != 0) { 
-        results[0].setAttribute("class", "resultItemHilight");
+      else if (resultsList.length != 0) { 
+        resultsList[0].setAttribute("class", "resultItemHilight");
       }
     }
   }
 } 
 
 // Append new list item to Resuts or Recents divs
-function showNewResultUI(node, isResult) {
-  var newListItem = document.createElement("div");
-  var image = document.createElement("div");
-  var text = document.createElement("div");
-  var title = document.createTextNode(node.name);
+function showNewResult(node: { name: string; type: any; id: any; }, list: HTMLElement) {
+  let newListItem = document.createElement("div");
+  let image = document.createElement("div");
+  let text = document.createElement("div");
+  let title = document.createTextNode(node.name);
 
   newListItem.setAttribute("class", "resultItem");
   text.setAttribute("class", "resultItemText");
   text.appendChild(title);
 
-  image.setAttribute("class", "resultItemImageLayer");
-  if (node.type === "PAGE") image.setAttribute("class", "resultItemImagePage");
-  else if (node.type === "FRAME") image.setAttribute("class", "resultItemImageFrame");
-  else if (node.type === "COMPONENT") image.setAttribute("class", "resultItemImageComponent");
-  else if (node.type === "TEXT") image.setAttribute("class", "resultItemImageText");
-  else if (node.type === "INSTANCE") image.setAttribute("class", "resultItemImageInstance"); 
-  else if (node.type === "VECTOR" || node.type === "STAR" || node.type === "LINE" || node.type === "ELLIPSE" || node.type === "POLYGON"|| node.type === "RECTANGLE") image.setAttribute("class", "resultItemImageVector"); 
+  switch (node.type) {
+    case "PAGE": image.setAttribute("class", "resultItemImagePage"); break;
+    case "TEXT": image.setAttribute("class", "resultItemImageText"); break;
+    case "FRAME": image.setAttribute("class", "resultItemImageFrame"); break;
+    case "INSTANCE": image.setAttribute("class", "resultItemImageInstance"); break;
+    case "COMPONENT": image.setAttribute("class", "resultItemImageComponent"); break;
+    case "VECTOR": case "STAR": case "LINE": case "ELLIPSE": case "POLYGON": 
+    case "RECTANGLE": image.setAttribute("class", "resultItemImageVector"); break;
+    default: image.setAttribute("class", "resultItemImageLayer");
+  }
   
   newListItem.appendChild(image);
   newListItem.appendChild(text);
 
   newListItem.addEventListener("click", function( event ) {   
-    amplitude.getInstance().logEvent('jump', {'recents' : !isResult});
+    console.log(list.id);
+    if (!debug) amplitude.getInstance().logEvent('jump', {'source' : list.id});
     parent.postMessage({ 
       pluginMessage: { 
         type: 'JUMP', 
@@ -242,16 +272,11 @@ function showNewResultUI(node, isResult) {
       '*');
   }, false);
 
-  if (isResult) { 
-    document.getElementById("resultsList").appendChild(newListItem);
-  }
-  else {
-    document.getElementById("recentsList").appendChild(newListItem);
-  }
+  list.appendChild(newListItem);
 }
 
-function isElementInViewport(element) {
-  var rect = element.getBoundingClientRect();
+function isElementInViewport(element: Element) {
+  let rect = element.getBoundingClientRect();
   return (
     rect.top >= 0 &&
     rect.left >= 0 &&
@@ -260,13 +285,25 @@ function isElementInViewport(element) {
   );
 }
 
+//
+
+let recentsClear = <HTMLDivElement>document.getElementById('recentsClear');
+recentsClear.addEventListener("click", function () {
+  parent.postMessage({ 
+    pluginMessage: { 
+      type: 'CLEARRECENTS', 
+      } 
+    }, 
+    '*');
+});
+
 // FAB UI
 
 let helpFab = document.getElementById("helpFab");
 let help = document.getElementById("help");
 
-let fabHeight = 182;
-let fabWidth = 175;
+const fabHeight = 182;
+const fabWidth = 175;
 
 $(help).animate({
   width: (fabWidth - 15),
@@ -276,19 +313,17 @@ $(help).animate({
 
 $(help).hide();
 
-helpFab.addEventListener("click", function( event ) {   
+helpFab.addEventListener("click", function(event) {   
   $(help).show();
   $(help).animate({
     width: fabWidth,
     height: fabHeight,
     opacity: 1,
     bottom: 15,
-  }, 120);
-    //}, 200, 'easeOutBack');
-
+  }, 200, 'easeOutBack');
 }, false);
 
-help.addEventListener("mouseleave", function( event ) { 
+help.addEventListener("mouseleave", function(event) { 
   var fieled = document.getElementById('searchBox');
   
   if (isElementInViewport(fieled)) { 

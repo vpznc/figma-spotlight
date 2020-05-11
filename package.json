@@ -8,10 +8,13 @@
     "@types/jquery": "^3.3.36",
     "amplitude": "^4.0.3",
     "amplitude-js": "^6.2.0",
-    "jquery": "^3.5.0"
+    "jquery": "^3.5.1",
+    "jquery-ui": "^1.12.1",
+    "jquery-ui-bundle": "^1.12.1-migrate"
   },
   "devDependencies": {
     "css-loader": "^3.5.3",
+    "file-loader": "^6.0.0",
     "html-webpack-inline-source-plugin": "0.0.10",
     "html-webpack-plugin": "^4.3.0",
     "react-dev-utils": "^10.2.1",

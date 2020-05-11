@@ -62,7 +62,6 @@ figma.ui.onmessage = message => {
   }
 
   if (message.type === 'CHECK') {
-
     for (const element of pages) {
       const seachNodeName = message.searchValue.toLowerCase();
       const nodeName = element.name.toLowerCase();
@@ -71,7 +70,6 @@ figma.ui.onmessage = message => {
         figma.ui.postMessage({ type: 'NEWRESULT', 
           node: element
         });
-        
       }    
     }
 
@@ -83,11 +81,17 @@ figma.ui.onmessage = message => {
         figma.ui.postMessage({ type: 'NEWRESULT', 
           node: element
         });
-        
       }    
     }
 
     figma.ui.postMessage({type: 'HILIGHTFIRST'});
+  }
+
+  if (message.type === "CLEARRECENTS") {
+    for (let counter = maxRecentsCount; counter >= 0; counter--) {
+      figma.root.setPluginData("recents" + counter, "");
+    }
+    outputRecents();
   }
 
   if (message.type === "JUMP") {
@@ -113,8 +117,8 @@ figma.ui.onmessage = message => {
     // Recents mechanic 
     // Checking if node is already in recents
 
-    var nodeIsRecents = false;
-    var nodeRecentsPosition = 0;
+    let nodeIsRecents = false;
+    let nodeRecentsPosition = 0;
 
     for (nodeRecentsPosition = maxRecentsCount; nodeRecentsPosition >= 0; nodeRecentsPosition--) {
       var recents = figma.root.getPluginData("recents" + nodeRecentsPosition);
@@ -133,8 +137,8 @@ figma.ui.onmessage = message => {
       moveStart = nodeRecentsPosition - 1;
     }
 
-    for (var counter = moveStart; counter >= 0; counter--) {
-      var recents = figma.root.getPluginData("recents" + counter);
+    for (let counter = moveStart; counter >= 0; counter--) {
+      let recents = figma.root.getPluginData("recents" + counter);
       
       if (recents != "") {
         figma.root.setPluginData("recents" + (counter + 1), recents);
@@ -142,7 +146,7 @@ figma.ui.onmessage = message => {
     }
     figma.root.setPluginData("recents1", nodeId);
     
-    outputRecents();
+    //outputRecents();
     figma.closePlugin();
   }
 }
