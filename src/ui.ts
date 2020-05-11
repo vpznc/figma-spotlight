@@ -203,7 +203,22 @@ window.onmessage = async (event) => {
   }
 
   if (event.data.pluginMessage.type === 'NEWRESULT') {
-    showNewResult(event.data.pluginMessage.node, document.getElementById("resultsList"));
+    //showNewResult(event.data.pluginMessage.node, document.getElementById("resultsList"));
+    showNewResult(
+      event.data.pluginMessage.node, 
+      document.getElementById("resultsList")
+    );
+  }
+
+  if (event.data.pluginMessage.type === 'NEWMARKEDRESULT') {
+    //showNewResult(event.data.pluginMessage.node, document.getElementById("resultsList"));
+    showNewMarkedResult(
+      event.data.pluginMessage.node, 
+      event.data.pluginMessage.part1, 
+      event.data.pluginMessage.part2, 
+      event.data.pluginMessage.part3, 
+      document.getElementById("resultsList")
+    );
   }
 
   if (event.data.pluginMessage.type === 'NORECENTS') {
@@ -241,6 +256,7 @@ function showNewResult(node: { name: string; type: any; id: any; }, list: HTMLEl
   let newListItem = document.createElement("div");
   let image = document.createElement("div");
   let text = document.createElement("div");
+  
   let title = document.createTextNode(node.name);
 
   newListItem.setAttribute("class", "resultItem");
@@ -274,6 +290,61 @@ function showNewResult(node: { name: string; type: any; id: any; }, list: HTMLEl
 
   list.appendChild(newListItem);
 }
+
+// Append new list item to Resuts or Recents divs
+function showNewMarkedResult(node: { name: string; type: any; id: any; }, part1: string, part2: string, part3: string, list: HTMLElement) {
+  let newListItem = document.createElement("div");
+  let image = document.createElement("div");
+  let text = document.createElement("div");
+
+  let textPart1 = document.createElement("span");
+  let textMarked = document.createElement("span");
+  let textPart2 = document.createElement("span");
+
+  textMarked.setAttribute("class", "resultItemTextMark");
+  
+  let titlePart1 = document.createTextNode(part1);
+  let titleMarked = document.createTextNode(part2);
+  let titlePart2 = document.createTextNode(part3);
+  
+  textPart1.appendChild(titlePart1);
+  textMarked.appendChild(titleMarked);
+  textPart2.appendChild(titlePart2);
+
+  newListItem.setAttribute("class", "resultItem");
+  text.setAttribute("class", "resultItemText");
+  text.appendChild(textPart1);
+  text.appendChild(textMarked);
+  text.appendChild(textPart2);
+
+  switch (node.type) {
+    case "PAGE": image.setAttribute("class", "resultItemImagePage"); break;
+    case "TEXT": image.setAttribute("class", "resultItemImageText"); break;
+    case "FRAME": image.setAttribute("class", "resultItemImageFrame"); break;
+    case "INSTANCE": image.setAttribute("class", "resultItemImageInstance"); break;
+    case "COMPONENT": image.setAttribute("class", "resultItemImageComponent"); break;
+    case "VECTOR": case "STAR": case "LINE": case "ELLIPSE": case "POLYGON": 
+    case "RECTANGLE": image.setAttribute("class", "resultItemImageVector"); break;
+    default: image.setAttribute("class", "resultItemImageLayer");
+  }
+  
+  newListItem.appendChild(image);
+  newListItem.appendChild(text);
+
+  newListItem.addEventListener("click", function( event ) {   
+    console.log(list.id);
+    if (!debug) amplitude.getInstance().logEvent('jump', {'source' : list.id});
+    parent.postMessage({ 
+      pluginMessage: { 
+        type: 'JUMP', 
+        id: node.id} 
+      }, 
+      '*');
+  }, false);
+
+  list.appendChild(newListItem);
+}
+
 
 function isElementInViewport(element: Element) {
   let rect = element.getBoundingClientRect();

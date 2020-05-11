@@ -62,26 +62,48 @@ figma.ui.onmessage = message => {
   }
 
   if (message.type === 'CHECK') {
+    console.clear();
+
     for (const element of pages) {
       const seachNodeName = message.searchValue.toLowerCase();
-      const nodeName = element.name.toLowerCase();
+      const nodeName = element.name;
 
-      if (nodeName.includes(seachNodeName)) {
-        figma.ui.postMessage({ type: 'NEWRESULT', 
-          node: element
+      let search = nodeName.search(new RegExp(seachNodeName, "i"));
+      
+      if (search != -1) {
+
+        let part1 = nodeName.slice(0, search);
+        let part2 = nodeName.slice(search, search + seachNodeName.length);
+        let part3 = nodeName.slice(search + seachNodeName.length);
+
+        figma.ui.postMessage({ type: 'NEWMARKEDRESULT', 
+          node: element,
+          part1: part1,
+          part2: part2,
+          part3: part3
         });
       }    
     }
 
     for (const element of topFrames) {
       const seachNodeName = message.searchValue.toLowerCase();
-      const nodeName = element.name.toLowerCase();
+      const nodeName = element.name;
 
-      if (nodeName.includes(seachNodeName)) {
-        figma.ui.postMessage({ type: 'NEWRESULT', 
-          node: element
+      let search = nodeName.search(new RegExp(seachNodeName, "i"));
+      
+      if (search != -1) {
+
+        let part1 = nodeName.slice(0, search);
+        let part2 = nodeName.slice(search, search + seachNodeName.length);
+        let part3 = nodeName.slice(search + seachNodeName.length);
+
+        figma.ui.postMessage({ type: 'NEWMARKEDRESULT', 
+          node: element,
+          part1: part1,
+          part2: part2,
+          part3: part3
         });
-      }    
+      }       
     }
 
     figma.ui.postMessage({type: 'HILIGHTFIRST'});
