@@ -46,12 +46,16 @@ module.exports = (env, argv) => ({
           },
         }] 
       },
-      {
-        test: /\.(woff|woff2|eot|ttf|otf)$/,
-          use: [
-            'file-loader',
-          ],
+      
+      /*{
+        test: /\.(ttf|eot|woff|woff2)$/,
+        use: {
+          loader: "file-loader",
+          options: {
+            name: "fonts/[name].[ext]",
+          },
         },
+      },*/
     ],
   },
 

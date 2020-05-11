@@ -221,6 +221,10 @@ window.onmessage = async (event) => {
     );
   }
 
+  if (event.data.pluginMessage.type === 'CLEARRESULTS') {
+    document.getElementById("resultsList").innerHTML = "";
+  }
+
   if (event.data.pluginMessage.type === 'NORECENTS') {
     $(document.getElementById("recents")).hide();
   }

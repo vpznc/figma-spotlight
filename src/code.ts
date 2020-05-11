@@ -62,7 +62,7 @@ figma.ui.onmessage = message => {
   }
 
   if (message.type === 'CHECK') {
-    console.clear();
+    figma.ui.postMessage({ type: 'CLEARRESULTS' });
 
     for (const element of pages) {
       const seachNodeName = message.searchValue.toLowerCase();
@@ -76,7 +76,8 @@ figma.ui.onmessage = message => {
         let part2 = nodeName.slice(search, search + seachNodeName.length);
         let part3 = nodeName.slice(search + seachNodeName.length);
 
-        figma.ui.postMessage({ type: 'NEWMARKEDRESULT', 
+        figma.ui.postMessage({ 
+          type: 'NEWMARKEDRESULT', 
           node: element,
           part1: part1,
           part2: part2,
@@ -97,7 +98,8 @@ figma.ui.onmessage = message => {
         let part2 = nodeName.slice(search, search + seachNodeName.length);
         let part3 = nodeName.slice(search + seachNodeName.length);
 
-        figma.ui.postMessage({ type: 'NEWMARKEDRESULT', 
+        figma.ui.postMessage({ 
+          type: 'NEWMARKEDRESULT', 
           node: element,
           part1: part1,
           part2: part2,
